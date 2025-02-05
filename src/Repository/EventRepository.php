@@ -21,6 +21,22 @@ class EventRepository extends ServiceEntityRepository
         return $this->findBy([], ['created_at' => 'ASC']);
     }
 
+    /**
+     * @return Event[] Returns an array of Event objects
+     */
+    public function getAllWithStatusAwaiting(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.eventStatus', 'es')  // Jointure avec la table event_status
+            ->innerJoin('es.status', 's')       // Jointure avec la table status
+            ->andWhere('s.id = :statusId')      // Condition sur le status.id
+            ->setParameter('statusId', 2)       // Valeur du paramètre (status_id = 1)
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
     //    /**
     //     * @return Event[] Returns an array of Event objects
     //     */

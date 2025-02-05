@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+
+<div class="flex flex-col items-center">
+    <h1 class="pt-5 pb-5 text-lg">Liste des évènements à classifier</h1>
+    <table class="min-w-[90%] bg-primary border border-gray shadow-lg rounded-lg">
+        <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+            <th class="py-3 px-6 text-left">Id</th>
+            <th class="py-3 px-6 text-left">Catégorie</th>
+            <th class="py-3 px-6 text-left">Titre</th>
+            <th class="py-3 px-6 text-left">Description</th>
+            <th class="py-3 px-6 text-left">Adresse</th>
+            {# <th class="py-3 px-6 text-left">Date Création</th>
+            <th class="py-3 px-6 text-left">Date Début</th>
+            <th class="py-3 px-6 text-left">Date Fin</th>
+            <th class="py-3 px-6 text-left">Status</th> #}
+            <th class="py-3 px-6 text-left">Validation</th>
+        </tr>
+        {% for event in events %}
+        <tr class="border-b border-gray-200 hover:bg-gray-100">
+            <td class="py-3 px-6 text-left">{{ event.id }}</td>
+            <td class="py-3 px-6 text-left">{{ event.category.name }}</td>
+            <td class="py-3 px-6 text-left">{{ event.name }}</td>
+            <td class="py-3 px-6 text-left">{{ event.description }}</td>
+            <td class="py-3 px-6 text-left">{{ event.locationName }}</td>
+            {# <td class="py-3 px-6 text-left">{{ event.createdAt|date('Y-m-d H:i:s') }}</td>
+            <td class="py-3 px-6 text-left">{{ event.dateStart|date('Y-m-d H:i:s') }}</td>
+            <td class="py-3 px-6 text-left">{{ event.dateEnd|date('Y-m-d H:i:s') }}</td>
+            <td class="py-3 px-6 text-left">{{ event.eventStatus.status.name }}</td> #}
+            <td>
+                {# <a href="{{ path('admin_event_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
+                <a href="{{ path('admin_event_delete', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</a> #}
+                <a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
+                <a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Refuser</a>
+            </td>        
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
