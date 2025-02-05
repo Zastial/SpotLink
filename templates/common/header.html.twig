@@ -1,0 +1,57 @@
+<header class="flex justify-between items-center px-6 py-3">
+    <div class="p-2 rounded-full flex items-center justify-between gap-6 mx-auto border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
+        <div class="py-2 sm:flex items-center gap-3 bg-primary rounded-full px-4 py-0.35">
+            <a href="/">
+                <i class="fa-solid fa-map-location-dot text-xl text-white"></i>
+                <span class="text-2xl font-extrabold text-white">SpotLink</span>
+            </a>
+        </div>
+        <nav class="hidden sm:flex gap-6 items-center px-4">
+            <a href="/" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a>
+            <a href="/" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a>
+        </nav>
+        
+        <div class="sm:hidden px-4 py-2">
+            <button id="burgerMenuBtn" class="text-primary text-3xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="hidden sm:flex bg-white px-6 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
+        <a href="/account">
+            <i class="fa-solid fa-user text-primary text-xl"></i>
+        </a>
+    </div>
+</header>
+
+<div id="sideMenu" class="rounded-3xl fixed top-0 right-0 bg-white w-64 transform translate-x-full transition-transform duration-300 ease-in-out shadow-lg z-50">
+    <div class="flex justify-between items-center p-4 border-b">
+        <span class="text-xl font-extrabold text-primary">SpotLink</span>
+        <button id="closeMenuBtn" class="text-2xl text-primary">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+    <nav class="flex flex-col p-4 gap-4">
+        <a href="/" class="text-lg text-gray-800 hover:underline">Voir la carte</a>
+        <a href="/" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
+        <a href="/account" class="text-lg text-gray-800 hover:underline">Mon compte</a>
+    </nav>
+</div>
+
+<script>
+    const burgerMenuBtn = document.getElementById('burgerMenuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    burgerMenuBtn.addEventListener('click', () => {
+        sideMenu.classList.remove('translate-x-full');
+    });
+    closeMenuBtn.addEventListener('click', () => {
+        sideMenu.classList.add('translate-x-full');
+    });
+    window.addEventListener('click', (e) => {
+        if (!sideMenu.contains(e.target) && !burgerMenuBtn.contains(e.target)) {
+            sideMenu.classList.add('translate-x-full');
+        }
+    });
+</script>
