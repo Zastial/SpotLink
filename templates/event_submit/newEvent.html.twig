@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un évènement{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-10">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Créer un évènement</h2>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.name, "Nom de l'évènement:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'input-field'}}) }}
+            </div>
+
+            <div>
+                {{ form_label(form.description, "Description:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'input-field'}}) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.location_name, "Nom du lieu:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.location_name, {'attr': {'class': 'input-field'}}) }}
+            </div>
+
+            <div>
+                {{ form_label(form.city, "Ville:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.city, {'attr': {'class': 'input-field'}}) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.date_start, "Date de début:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.date_start, {'attr': {'class': 'input-field'}}) }}
+            </div>
+
+            <div>
+                {{ form_label(form.date_end, "Date de fin:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.date_end, {'attr': {'class': 'input-field'}}) }}
+            </div>
+        </div>
+
+        <div>
+            {{ form_label(form.category, "Catégorie:", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.category, {'attr': {'class': 'input-field'}}) }}
+        </div>
+
+        <!-- Ajout des nouveaux champs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.house_number, "Numéro de maison:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.house_number, {'attr': {'class': 'input-field'}}) }}
+            </div>
+
+            <div>
+                {{ form_label(form.road, "Rue:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.road, {'attr': {'class': 'input-field'}}) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.postcode, "Code postal:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.postcode, {'attr': {'class': 'input-field'}}) }}
+            </div>
+
+            <div>
+                {{ form_label(form.state, "État:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.state, {'attr': {'class': 'input-field'}}) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.county, "Comté:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.county, {'attr': {'class': 'input-field'}}) }}
+            </div>
+
+            <div>
+                {{ form_label(form.country, "Pays:", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.country, {'attr': {'class': 'input-field'}}) }}
+            </div>
+        </div>
+        
+        <button class="w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-dark transition duration-300">
+            Créer
+        </button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
