@@ -21,18 +21,27 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/events-awaiting', name: 'app_admin_events_awaiting')]
-    public function eventsAwaiting(EventRepository $eventRepository): Response
+    #[Route('/admin/events', name: 'app_admin_events')]
+    public function events(Request $request, EventRepository $eventRepository): Response
     {
-        $events = $eventRepository->getAllWithStatusAwaiting();
-        return $this->render('admin/events-awaiting.html.twig', [
+        // Au cas où on veut rajouter un filtre de recherche
+        $search = $request->query->get('search', '');
+        $status = $request->query->get('status', -1);
+
+        // Filtrer les événements
+        $events = $eventRepository->getAllWithFilters($search, $status);
+
+        return $this->render('admin/events.html.twig', [
             'controller_name' => 'AdminController',
             'events' => $events,
+            'status' => $status
+            /* 'search' => $search */
+            
         ]);
     }
 
     #[Route('/admin/event-to-refuse/{id}', name: 'app_admin_event_to_refuse')]
-    public function eventsToRefuse(Request $request, int $id,EventRepository $eventRepository, StatusRepository $statusRepository, EntityManagerInterface $entityManagerInterface                                                   ): Response
+    public function eventsToRefuse(Request $request, int $id, EventRepository $eventRepository, StatusRepository $statusRepository, EntityManagerInterface $entityManagerInterface): Response
     {
         $events = $eventRepository->find($id);
         $comment = '';
@@ -45,9 +54,10 @@ final class AdminController extends AbstractController
 
             $events->getEventStatus()->setStatus($status);
             $events->getEventStatus()->setComment($comment);
+            $events->getEventStatus()->setUpdatedAt(new \DateTimeImmutable());
             $entityManagerInterface->flush();
 
-            return $this->redirectToRoute('app_admin_events_awaiting'); 
+            return $this->redirectToRoute('app_admin_events');
         }
 
         return $this->render('admin/event-to-refuse.html.twig', [
@@ -58,18 +68,14 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/admin/event-to-validate/{id}', name: 'app_admin_event_to_validate')]
-    public function eventsToValidate(int $id,EventRepository $eventRepository, StatusRepository $statusRepository, EntityManagerInterface $entityManagerInterface                                                   ): Response
+    public function eventsToValidate(int $id, EventRepository $eventRepository, StatusRepository $statusRepository, EntityManagerInterface $entityManagerInterface): Response
     {
         $events = $eventRepository->find($id);
         $status = $statusRepository->find(3);
         $events->getEventStatus()->setStatus($status);
-        /* $events->getEventStatus()->setUpdatedAt((new \DateTimeImmutable())->format('Y-m-d H:i:s')); */
+        $events->getEventStatus()->setUpdatedAt(new \DateTimeImmutable());
         $entityManagerInterface->flush();
 
-        return $this->redirectToRoute('app_admin_events_awaiting'); 
-        
+        return $this->redirectToRoute('app_admin_events');
     }
-
-
-
 }

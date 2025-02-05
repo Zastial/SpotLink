@@ -36,6 +36,27 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getAllWithFilters(?string $search, ?int $status): array
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->innerJoin('e.eventStatus', 'es')
+            ->innerJoin('es.status', 's');
+
+        if (!empty($search)) {
+            $qb->andWhere('e.name LIKE :search')
+                ->setParameter('search', "%$search%");
+        }
+
+        if ($status !== -1) {
+            $qb->andWhere('s.id = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $qb->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
     //    /**
     //     * @return Event[] Returns an array of Event objects
