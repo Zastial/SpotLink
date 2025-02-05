@@ -25,3 +25,5 @@ services:
 
     # Service pour l'inscription d'un utilisateur
     App\Services\Interfaces\UserRegistrationServiceInterface: '@App\Services\UserRegistrationService'
+    
+    App\Services\Interfaces\UserLoginServiceInterface: '@App\Services\UserLoginService'

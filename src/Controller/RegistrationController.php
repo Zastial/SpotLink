@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserInscriptionType;
+use App\Form\UserRegisterType;
 use App\Services\Interfaces\UserRegistrationServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,24 +31,19 @@ final class RegistrationController extends AbstractController
     {
         $user = new User();
 
-        $form = $this->createForm(UserInscriptionType::class, $user);
-
-        // Traiter la soumission du formulaire
+        $form = $this->createForm(UserRegisterType::class, $user);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            //Récupération du mot de passe (mapped à false dans le UserInscriptionType pour le gérer nous même)
             $password = $form->get('password')->getData();
 
             $success = $this->registrationService->register($user, $password);
 
             if (!$success) {
-                // Afficher un message d'erreur si l'inscription a échoué
                 $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription.');
-                return $this->redirectToRoute('register'); // Redirige vers la page d'inscription en cas d'échec
+                return $this->redirectToRoute('register');
             }
 
-            // Si l'inscription a réussi, rediriger vers la page de login
             return $this->redirectToRoute('login');
 
         }
