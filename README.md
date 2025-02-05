@@ -14,3 +14,9 @@ Then launch the app :
 ```
 symfony server:start
 ```
+
+To Run Tailwind watcher :
+
+```
+php bin/console tailwind:build --watch
+```
