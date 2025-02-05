@@ -2,49 +2,45 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\UserInscriptionType;
 use App\Services\Interfaces\UserRegistrationServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 final class RegistrationController extends AbstractController
 {
+    private UserRegistrationServiceInterface $registrationService;
+    private ValidatorInterface $validator;
 
 
-     // Injection du service d'inscription
-    public function __construct(UserRegistrationServiceInterface $registrationService)
+    // Injection du service d'inscription
+    public function __construct(UserRegistrationServiceInterface $registrationService, ValidatorInterface $validator)
     {
         $this->registrationService = $registrationService;
+        $this->validator = $validator;
     }
 
 
-    #[Route('/register', name: 'rsegister')]
+    #[Route('/register', name: 'register')]
     public function register(Request $request): Response
     {
-        $user = new User(); // Créer une nouvelle instance de User
+        $user = new User();
 
-        // Créer le formulaire d'inscription
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserInscriptionType::class, $user);
 
         // Traiter la soumission du formulaire
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            
-            // Validation des données (les annotations @Assert sont vérifiées ici)
-            $errors = $validator->validate($user);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            if (count($errors) > 0) {
-                // Si des erreurs sont trouvées, les afficher (elles seront envoyées à la vue)
-                return $this->render('registration/register.html.twig', [
-                    'form' => $form->createView(),
-                    'errors' => $errors,
-                ]);
-            }
+            //Récupération du mot de passe (mapped à false dans le UserInscriptionType pour le gérer nous même)
+            $password = $form->get('password')->getData();
 
-
-            // Utilisation du service d'enregistrement
-            $success = $this->registrationService->register($user);
+            $success = $this->registrationService->register($user, $password);
 
             if (!$success) {
                 // Afficher un message d'erreur si l'inscription a échoué
@@ -54,6 +50,7 @@ final class RegistrationController extends AbstractController
 
             // Si l'inscription a réussi, rediriger vers la page de login
             return $this->redirectToRoute('login');
+
         }
 
         return $this->render('registration/register.html.twig', [

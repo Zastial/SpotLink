@@ -15,8 +15,11 @@ class UserInscriptionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', TextType::class, [
-                'label' => 'Nom d\'utilisateur',
+            ->add('first_name', TextType::class, [
+                'label' => 'Prénom',
+            ])
+            ->add('last_name', TextType::class, [
+                'label' => 'Nom',
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse email',
@@ -24,6 +27,7 @@ class UserInscriptionType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
+                'mapped' => false,                              // A traiter manuellement dans le controller
                 'attr' => ['placeholder' => 'Mot de passe'],
             ]);
     }

@@ -12,5 +12,5 @@ interface UserRegistrationServiceInterface
     /**
      * Enregistre un utilisateur
      */
-    public function register(User $user): bool;
+    public function register(User $user, String $password): bool;
 }

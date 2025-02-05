@@ -5,31 +5,38 @@
 {% block body %}
     <h1>Inscription</h1>
 
-   {{ form_start(form) }}
+   {{ form_start(form,  { 'attr': { 'data-turbo': 'false' } })  }}
+
+    <div>
+        {{ form_label(form.first_name) }}
+        {{ form_widget(form.first_name) }}
+        {{ form_errors(form.first_name) }}
+
+    </div>
+
+    <div>
+        {{ form_label(form.last_name) }}
+        {{ form_widget(form.last_name) }}
+        {{ form_errors(form.last_name) }}
+
+    </div>
+
+
 
     <div>
         {{ form_label(form.email) }}
         {{ form_widget(form.email) }}
-        {% if form.email.vars.errors|length > 0 %}
-            <div class="error-message" style="color: red;">
-                {% for error in form.email.vars.errors %}
-                    <p>{{ error.message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
+        {{ form_errors(form.email) }}
+
     </div>
 
     <div>
         {{ form_label(form.password) }}
         {{ form_widget(form.password) }}
-        {% if form.password.vars.errors|length > 0 %}
-            <div class="error-message" style="color: red;">
-                {% for error in form.password.vars.errors %}
-                    <p>{{ error.message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
+        {{ form_errors(form.password) }}
     </div>
+
+   <h1>Form error {{ dump(form_errors(form)) }}</h1>
 
     <button type="submit">S'inscrire</button>
 

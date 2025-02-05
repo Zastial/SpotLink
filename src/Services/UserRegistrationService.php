@@ -18,14 +18,17 @@ class UserRegistrationService implements UserRegistrationServiceInterface
     }
 
 
-    public function register(User $user): bool
+    public function register(User $user, String $password): bool
     {
         try {
+            //TODO : à faire une fois les pages faites et au moment de l'utilisation du JWT
+
             // Encoder le mot de passe de l'utilisateur
             
             // Enregistrer l'utilisateur dans la base de données
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+
+            //$this->entityManager->persist($user);
+            //$this->entityManager->flush();
 
             // Retourner vrai si tout s'est bien passé
             return true;
