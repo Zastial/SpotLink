@@ -24,6 +24,9 @@ class Category
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'category')]
     private Collection $events;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $marker_color = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -72,6 +75,18 @@ class Category
                 $event->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMarkerColor(): ?string
+    {
+        return $this->marker_color;
+    }
+
+    public function setMarkerColor(?string $marker_color): static
+    {
+        $this->marker_color = $marker_color;
 
         return $this;
     }
