@@ -8,28 +8,94 @@
 
         {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                {{ form_label(form.name, "Nom de l'évènement:", {'label_attr': {'class': 'label-field'}}) }}
-                {{ form_widget(form.name, {'attr': {'class': 'input-field'}}) }}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(form.name, "Nom*", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
+                </div>
+                    <div>
+                    {{ form_label(form.category, "Catégorie*", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(form.category, {'attr': {'class': 'input-field'}}) }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(form.date_start, "Date de début*", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(form.date_start, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.date_end, "Date de fin*", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(form.date_end, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
+                </div>
             </div>
 
             <div>
-                {{ form_label(form.description, "Description:", {'label_attr': {'class': 'label-field'}}) }}
-                {{ form_widget(form.description, {'attr': {'class': 'input-field'}}) }}
+                {{ form_label(form.description, "Description", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'input-field h-32', 'rows': '5'}}) }}
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                {{ form_label(form.location_name, "Nom du lieu:", {'label_attr': {'class': 'label-field'}}) }}
+            <label for="address" class="label-field">Adresse*</label>
+            <select id="address" class="w-full px-4 py-2"  required="required">
+                <option value="">Saisir une adresse ou un lieu...</option>
+            </select>
+            </div>
+            <div>
+                {{ form_label(form.location_name, "Nom du lieu (optionnel)", {'label_attr': {'class': 'label-field'}}) }}
                 {{ form_widget(form.location_name, {'attr': {'class': 'input-field'}}) }}
             </div>
 
-            <div>
-                {{ form_label(form.city, "Ville:", {'label_attr': {'class': 'label-field'}}) }}
-                {{ form_widget(form.city, {'attr': {'class': 'input-field'}}) }}
-            </div>
+            <div class="hidden" id="address-fields">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        {{ form_label(form.house_number, "Numéro de maison", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(form.house_number, {'attr': {'class': 'input-field'}}) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.road, "Rue", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(form.road, {'attr': {'class': 'input-field'}}) }}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        {{ form_label(form.postcode, "Code postal", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(form.postcode, {'attr': {'class': 'input-field'}}) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.city, "Ville", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(form.city, {'attr': {'class': 'input-field'}}) }}
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_label(form.county, "Département", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(form.county, {'attr': {'class': 'input-field'}}) }}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        {{ form_label(form.state, "Région", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(form.state, {'attr': {'class': 'input-field'}}) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.country, "Pays", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(form.country, {'attr': {'class': 'input-field'}}) }}
+                    </div>
+                </div>
+            </div>       
+            <p> * Champs obligatoires </p>     
+            <button class="w-full bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
+                Créer
+            </button>
+
+            {{ form_end(form) }}
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -93,3 +159,75 @@
         {{ form_end(form) }}
     </div>
 {% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        $('#address').select2({
+            minimumInputLength: 3,
+            language: {
+                inputTooShort: function() {
+                    return "Saisissez au moins 3 caractères pour rechercher";
+                },
+                noResults: function() {
+                    return "Aucune adresse trouvée";
+                },
+            },
+            ajax: {
+                url: '/getaddress',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            }
+        });
+
+        $('#address').attr('required', 'required');
+
+        $('#address').on('select2:open', function() {
+            document.querySelector('.select2-search__field').focus();
+        });
+
+        $('#address').on('select2:select', function(e) {
+            document.getElementById('address-fields').className = ""
+            const addressDetails = e.params.data['details'];
+            console.log(addressDetails);
+            'house_number' in addressDetails ? $('#event_form_house_number').val(addressDetails.house_number) : null;
+            'road' in addressDetails ? $('#event_form_road').val(addressDetails.road) : null;
+            'postcode' in addressDetails ? $('#event_form_postcode').val(addressDetails.postcode) : null;
+            $('#event_form_city').val('city' in addressDetails ? addressDetails.city : ('road' in addressDetails ? addressDetails.road : ''));
+            'county' in addressDetails ? $('#event_form_county').val(addressDetails.county) : null;
+            'state' in addressDetails ? $('#event_form_state').val(addressDetails.state) : null;
+            'country' in addressDetails ? $('#event_form_country').val(addressDetails.country) : null;
+        });
+
+        $('form').on('submit', function(e) {
+            const today = new Date();
+            const dateStart = new Date($('#event_form_date_start').val());
+            const dateEnd = new Date($('#event_form_date_end').val());
+
+            const isInvalidDateStart = dateStart < today;
+            const isInvalidDateEnd = dateEnd < today || dateEnd < dateStart;
+
+            if (isInvalidDateStart || isInvalidDateEnd) {
+                if (isInvalidDateStart) {
+                    alert("La date de début doit être égale ou supérieure à la date actuelle.");
+                } else {
+                    alert("La date de fin doit être égale ou supérieure à la date actuelle, et supérieure ou égale à la date de début.");
+                }
+                e.preventDefault(); // Empêche l'envoi du formulaire
+                return;
+            }
+        });
+
+    });
+    </script>
+    {% endblock %}

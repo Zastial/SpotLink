@@ -8,6 +8,5 @@
     }
     .label-field {
         @apply block text-gray-700 font-medium;
-    }
-    
+    } 
 }
