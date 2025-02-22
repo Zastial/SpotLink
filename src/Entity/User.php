@@ -62,10 +62,17 @@ class User
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $username = null;
 
+    /**
+     * @var Collection<int, JwtToken>
+     */
+    #[ORM\OneToMany(targetEntity: JwtToken::class, mappedBy: 'createdBy')]
+    private Collection $jwtTokens;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->jwtTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -219,6 +226,36 @@ class User
     public function setUsername(?string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JwtToken>
+     */
+    public function getJwtTokens(): Collection
+    {
+        return $this->jwtTokens;
+    }
+
+    public function addJwtToken(JwtToken $jwtToken): static
+    {
+        if (!$this->jwtTokens->contains($jwtToken)) {
+            $this->jwtTokens->add($jwtToken);
+            $jwtToken->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJwtToken(JwtToken $jwtToken): static
+    {
+        if ($this->jwtTokens->removeElement($jwtToken)) {
+            // set the owning side to null (unless already changed)
+            if ($jwtToken->getCreatedBy() === $this) {
+                $jwtToken->setCreatedBy(null);
+            }
+        }
 
         return $this;
     }
