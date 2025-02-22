@@ -5,40 +5,60 @@
 {% block body %}
     <h1>Inscription</h1>
 
-   {{ form_start(form,  { 'attr': { 'data-turbo': 'false' } })  }}
+   <div class="flex justify-center items-center min-h-screen">
+    <div class="w-96 bg-white p-6 rounded-lg shadow-lg mt-10">
+        <div class="flex items-center mb-4">
+            <i class="fa-solid fa-user-plus text-2xl mr-2"></i>
+            <h2 class="text-2xl font-bold text-gray-800">Créer un compte</h2>
+        </div>
 
-    <div>
-        {{ form_label(form.first_name) }}
-        {{ form_widget(form.first_name) }}
-        {{ form_errors(form.first_name) }}
+        {{ form_start(form, { 'attr': { 'class': 'space-y-4', 'data-turbo': 'false' } }) }}
 
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.first_name, "Prénom", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.first_name, {'attr': {'class': 'input-field'}}) }}
+                {{ form_errors(form.first_name) }}
+            </div>
+
+            <div>
+                {{ form_label(form.last_name, "Nom", {'label_attr': {'class': 'label-field'}}) }}
+                {{ form_widget(form.last_name, {'attr': {'class': 'input-field'}}) }}
+                {{ form_errors(form.last_name) }}
+            </div>
+        </div>
+
+        <div>
+            {{ form_label(form.email, "Adresse email", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.email, {'attr': {'class': 'input-field'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div>
+            {{ form_label(form.password, "Mot de passe", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.password, {'attr': {'class': 'input-field'}}) }}
+            {{ form_errors(form.password) }}
+        </div>
+
+        <div>
+            {{ form_label(form.confirmPassword, "Confirmer le mot de passe", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.confirmPassword, {'attr': {'class': 'input-field'}}) }}
+            {{ form_errors(form.confirmPassword) }}
+        </div>
+
+        {% if form_errors(form) %}
+            <div class="bg-red-100 text-red-700 p-2 rounded mt-2">
+                <strong>Erreurs :</strong>
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="w-full bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
+            S'inscrire
+        </button>
+
+        {{ form_end(form) }}
     </div>
+</div>
 
-    <div>
-        {{ form_label(form.last_name) }}
-        {{ form_widget(form.last_name) }}
-        {{ form_errors(form.last_name) }}
-
-    </div>
-
-
-
-    <div>
-        {{ form_label(form.email) }}
-        {{ form_widget(form.email) }}
-        {{ form_errors(form.email) }}
-
-    </div>
-
-    <div>
-        {{ form_label(form.password) }}
-        {{ form_widget(form.password) }}
-        {{ form_errors(form.password) }}
-    </div>
-
-   <h1>Form error {{ dump(form_errors(form)) }}</h1>
-
-    <button type="submit">S'inscrire</button>
-
-{{ form_end(form) }}
 {% endblock %}

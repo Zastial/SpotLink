@@ -30,22 +30,25 @@ final class RegistrationController extends AbstractController
     public function register(Request $request): Response
     {
         $user = new User();
-
         $form = $this->createForm(UserRegisterType::class, $user);
+        
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $password = $form->get('password')->getData();
 
-            $success = $this->registrationService->register($user, $password);
+            // Hash du mot de passe avant de l'enregistrer en base
+            $hashedPassword = $passwordHasher->hashPassword($user, $password);
+            $user->setPassword($hashedPassword);
 
-            if (!$success) {
-                $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription.');
-                return $this->redirectToRoute('register');
-            }
+            // Sauvegarde de l'utilisateur en base de données
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // Ajout d'un message flash pour informer l'utilisateur
+            $this->addFlash('success', 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.');
 
             return $this->redirectToRoute('login');
-
         }
 
         return $this->render('registration/register.html.twig', [

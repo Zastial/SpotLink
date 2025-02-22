@@ -1,4 +1,44 @@
 {% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
 {% block body %}
-<h1>Login<h1>
+    <h1>Inscription</h1>
+
+   <div class="flex justify-center items-center min-h-screen">
+    <div class="w-80 bg-white p-6 rounded-lg shadow-lg mt-10">
+        <div class="flex items-center mb-4">
+            <i class="fa-solid fa-sign-in-alt text-2xl mr-2"></i>
+            <h2 class="text-2xl font-bold text-gray-800">Se connecter</h2>
+        </div>
+
+        {{ form_start(form, { 'attr': { 'class': 'space-y-4', 'data-turbo': 'false' } }) }}
+
+        <div>
+            {{ form_label(form.email, "Adresse email", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.email, {'attr': {'class': 'input-field'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div>
+            {{ form_label(form.password, "Mot de passe", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.password, {'attr': {'class': 'input-field'}}) }}
+            {{ form_errors(form.password) }}
+        </div>
+
+        {% if form_errors(form) %}
+            <div class="bg-red-100 text-red-700 p-2 rounded mt-2">
+                <strong>Erreurs :</strong>
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="w-full bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
+            Se connecter
+        </button>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+
 {% endblock %}

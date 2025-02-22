@@ -36,6 +36,8 @@ Then launch the app :
 
 ```
 symfony server:start
+php bin/console server:run
+php -S 127.0.0.1:8000 -t public/
 ```
 
 To Run Tailwind watcher :
@@ -43,3 +45,6 @@ To Run Tailwind watcher :
 ```
 php bin/console tailwind:build --watch
 ```
+
+postgres
+net start postgresql

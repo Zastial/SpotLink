@@ -29,6 +29,11 @@ class UserRegisterType extends AbstractType
                 'label' => 'Mot de passe',
                 'mapped' => false,                              // A traiter manuellement dans le controller
                 'attr' => ['placeholder' => 'Mot de passe'],
+            ])
+            ->add('confirmPassword', PasswordType::class, [
+                'label' => 'Confirmer votre mot de passe',
+                'mapped' => false,                              // A traiter manuellement dans le controller
+                'attr' => ['placeholder' => 'Mot de passe'],
             ]);
     }
 
