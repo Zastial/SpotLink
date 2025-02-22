@@ -59,6 +59,9 @@ class User
     #[ORM\ManyToMany(targetEntity: Event::class)]
     private Collection $favorites;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $username = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -204,6 +207,18 @@ class User
     public function removeFavorite(Event $favorite): static
     {
         $this->favorites->removeElement($favorite);
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): static
+    {
+        $this->username = $username;
 
         return $this;
     }
