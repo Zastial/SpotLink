@@ -33,32 +33,32 @@ final class RegistrationController extends AbstractController
         try {
             $user = new User();
             $form = $this->createForm(UserRegisterType::class, $user);
-            
             $form->handleRequest($request);
     
             if ($form->isSubmitted() && $form->isValid()) {
                 $password = $form->get('password')->getData();
     
                 // Sauvegarde de l'utilisateur en base de données
-                $this->registrationService->register($user, $password);
-                
-                // Ajout d'un message flash pour informer l'utilisateur
-                $this->addFlash('success', 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.');
+                $success = $this->registrationService->register($user, $password);
     
+                if (!$success) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription.');
+                    return $this->redirectToRoute('register');
+                }
+    
+                $this->addFlash('success', 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.');
                 return $this->redirectToRoute('login');
             }
-        } catch(\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors de la création de votre compte. Veuillez réessayer.');
-
-            // Si tu veux retourner un message spécifique dans la vue
+    
+            // Si le formulaire n'est pas valide, les erreurs seront automatiquement attachées au formulaire
             return $this->render('registration/register.html.twig', [
                 'form' => $form->createView(),
-                'error_message' => 'Une erreur est survenue, veuillez réessayer.'
             ]);
+            
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue. Veuillez réessayer.');
+            return $this->redirectToRoute('register');
         }
-       
-        return $this->render('registration/register.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
+    
 }

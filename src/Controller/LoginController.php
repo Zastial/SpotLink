@@ -30,35 +30,42 @@ final class LoginController extends AbstractController
     #[Route('/login', name: 'login')]
     public function login(Request $request): Response
     {
-        $user = new User();
-        $form = $this->createForm(UserLoginType::class, $user);
-        $form->handleRequest($request);
+        try {
+            $user = new User();
+            $form = $this->createForm(UserLoginType::class, $user);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
 
-            $password = $form->get('password')->getData();
-            $success = $this->loginService->login($user, $password);
+                $password = $form->get('password')->getData();
+                $success = $this->loginService->login($user, $password);
 
-            if (!$success) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la connexion.');
-                return $this->redirectToRoute('login');
+                if (!$success) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de la connexion.');
+                    return $this->redirectToRoute('login');
+                }
+
+                $this->addFlash('success', 'Connexion réussie.');
+                return $this->redirectToRoute('app_home_page');
+
             }
 
-            $this->addFlash('success', 'Connexion réussie.');
-            return $this->redirectToRoute('app_home_page');
+            // // Si le formulaire n'est pas soumis ou est invalide, afficher le formulaire avec les erreurs
+            // // Cela inclut aussi les erreurs de formulaire
+            // if ($form->isSubmitted() && !$form->isValid()) {
+            //     $this->addFlash('error', 'Le formulaire est mal renseigné');
+            // }
 
+            // Si le formulaire n'a pas été soumis ou est invalide, affichage de la page avec le formulaire
+            return $this->render('login/login.html.twig', [
+                'form' => $form->createView()
+            ]);
+
+        } catch(\Exception $e) {
+            // TODO pages d'erreur 
+            // $this->addFlash('error', 'Une erreur est survenue lors de la connexion. Veuillez contacter votre administrateur.');
+            // return $this->redirectToRoute('error_page');  // Page d'erreur personnalisée
         }
-
-        // Si le formulaire n'est pas soumis ou est invalide, afficher le formulaire avec les erreurs
-        // Cela inclut aussi les erreurs de formulaire
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $this->addFlash('error', 'Le formulaire est mal renseigné');
-        }
-
-        // Si le formulaire n'a pas été soumis ou est invalide, affichage de la page avec le formulaire
-        return $this->render('login/login.html.twig', [
-            'controller_name' => 'LoginController',
-            'form' => $form->createView()
-        ]);
+        
     }
 }

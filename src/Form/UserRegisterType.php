@@ -31,7 +31,7 @@ class UserRegisterType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
-                'mapped' => false,                      // Ne sera pas sauvegardé directement dans l'entité User, a manipuler dans le controller
+                'mapped' => false,
                 'attr' => ['placeholder' => 'Mot de passe'],
                 'constraints' => [
                     new Assert\NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
@@ -40,7 +40,7 @@ class UserRegisterType extends AbstractType
                         'minMessage' => 'Le mot de passe doit contenir au moins 6 caractères.',
                     ]),
                 ],
-            ])
+            ])            
             ->add('confirmPassword', PasswordType::class, [
                 'label' => 'Confirmer votre mot de passe',
                 'mapped' => false,                       // Ne sera pas sauvegardé directement dans l'entité User, a manipuler dans le controller
@@ -55,8 +55,7 @@ class UserRegisterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
-            'validation_groups' => ['register']
+            'data_class' => User::class
         ]);
     }
 
