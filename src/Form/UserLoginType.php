@@ -17,10 +17,10 @@ class UserLoginType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'Prénom',
+                'label' => 'Email',
             ])
             ->add('password', PasswordType::class, [
-                'label' => 'Prénom',
+                'label' => 'Mot de passe',
             ])
         ;
     }
@@ -29,6 +29,8 @@ class UserLoginType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'validation_groups' => ['login'] // permet d'utiliser uniquement les attributs email et password de l'entité User s
+                                             // sinon vu que first_name par ex est obligatoire, le formulaire sera considéré comme invalide
         ]);
     }
 }

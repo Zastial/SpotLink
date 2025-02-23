@@ -28,18 +28,15 @@ final class LoginController extends AbstractController
 
 
     #[Route('/login', name: 'login')]
-    public function index(): Response
+    public function login(Request $request): Response
     {
-
         $user = new User();
-
         $form = $this->createForm(UserLoginType::class, $user);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            //Récupération du mot de passe
             $password = $form->get('password')->getData();
-
             $success = $this->loginService->login($user, $password);
 
             if (!$success) {
@@ -47,12 +44,21 @@ final class LoginController extends AbstractController
                 return $this->redirectToRoute('login');
             }
 
-            return $this->redirectToRoute('');
+            $this->addFlash('success', 'Connexion réussie.');
+            return $this->redirectToRoute('app_home_page');
 
         }
 
+        // Si le formulaire n'est pas soumis ou est invalide, afficher le formulaire avec les erreurs
+        // Cela inclut aussi les erreurs de formulaire
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Le formulaire est mal renseigné');
+        }
+
+        // Si le formulaire n'a pas été soumis ou est invalide, affichage de la page avec le formulaire
         return $this->render('login/login.html.twig', [
             'controller_name' => 'LoginController',
+            'form' => $form->createView()
         ]);
     }
 }
