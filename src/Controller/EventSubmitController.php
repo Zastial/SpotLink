@@ -3,43 +3,69 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\EventStatusRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\EventFormType;
 use App\Entity\Event;
+use App\Entity\EventStatus;
 use App\Repository\EventRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\EventService;
 use App\Repository\UserRepository;
+use App\Repository\StatusRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class EventSubmitController extends AbstractController
 {
     private HttpClientInterface $httpClient;
     private EventService $eventService;
-    public function __construct(HttpClientInterface $httpClient, EventService $eventService)
+    private EntityManagerInterface $entityManager;
+    public function __construct(HttpClientInterface $httpClient, EventService $eventService, EntityManagerInterface $entityManager)
     {
         $this->httpClient = $httpClient;
         $this->eventService = $eventService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/event/submit', name: 'event_submit')]
-    public function new_event(Request $request, UserRepository $userRepository): Response
+    public function new_event(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository): Response
     {
         $event = new Event();
         $form = $this->createForm(EventFormType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            //ToDo: à remplacer par le user connecté
-            $user = $userRepository->findOneBy([], ['id' => 'ASC']);
-            $event->setCreator($user);
+            $this->entityManager->beginTransaction();
+            try{
+                //ToDo: à remplacer par le user connecté
+                $user = $userRepository->findOneBy([], ['id' => 'ASC']);
+                $event->setCreator($user);
 
-            $event->setCreatedAt(new \DateTimeImmutable());
-            $this->eventService->save($event);
-            return $this->redirectToRoute('app_home_page');
+                $event->setCreatedAt(new \DateTimeImmutable());
+                $this->eventService->save($event);
+
+                // Création du statut de l'événement
+                $eventStatus = new EventStatus();
+                $eventStatus->setEvent($event);
+                $eventStatus->setCreatedAt(new \DateTimeImmutable());
+
+                // Assigner le statut "CREE"
+                $status = $statusRepository->findOneBy(['name' => 'CREE']);
+                $eventStatus->setStatus($status);
+                $eventStatusRepository->save($eventStatus);
+
+                $this->entityManager->commit();
+                return $this->redirectToRoute('app_home_page');
+            }catch (\Exception $e) {
+                $this->entityManager->rollback();
+                $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'événement : ' . $e->getMessage());
+
+                return $this->redirectToRoute('event_submit');
+            }
         }
 
         return $this->render('event_submit/newEvent.html.twig', [
