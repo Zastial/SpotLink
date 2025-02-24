@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class EventFormType extends AbstractType
 {
@@ -18,6 +19,9 @@ class EventFormType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
+            ->add('osm_id', HiddenType::class)
+            ->add('latitude', HiddenType::class)
+            ->add('longitude', HiddenType::class)
             ->add('location_name')
             ->add('house_number')
             ->add('road')
@@ -34,7 +38,7 @@ class EventFormType extends AbstractType
             ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
             ])
         ;
     }
