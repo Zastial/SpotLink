@@ -11,13 +11,16 @@ use App\Entity\Event;
 use App\Repository\EventRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\EventService;
 
 final class EventSubmitController extends AbstractController
 {
     private HttpClientInterface $httpClient;
-    public function __construct(HttpClientInterface $httpClient)
+    private EventService $eventService;
+    public function __construct(HttpClientInterface $httpClient, EventService $eventService)
     {
         $this->httpClient = $httpClient;
+        $this->eventService = $eventService;
     }
 
     #[Route('/event/submit', name: 'event_submit')]
@@ -26,6 +29,11 @@ final class EventSubmitController extends AbstractController
         $event = new Event();
         $form = $this->createForm(EventFormType::class, $event);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->eventService->save($event);
+            return $this->redirectToRoute('app_home_page');
+        }
 
         return $this->render('event_submit/newEvent.html.twig', [
             'form' => $form->createView(),
