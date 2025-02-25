@@ -1,7 +1,7 @@
 <header class="flex justify-between items-center px-6 py-3">
     <div class="p-2 rounded-full flex items-center justify-between gap-6 mx-auto border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
         <div class="py-2 sm:flex items-center gap-3 bg-primary rounded-full px-4 py-0.35">
-            <a href="/">
+            <a href="/" data-turbo="false"> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
                 <i class="fa-solid fa-map-location-dot text-xl text-white"></i>
                 <span class="text-2xl font-extrabold text-white">SpotLink</span>
             </a>

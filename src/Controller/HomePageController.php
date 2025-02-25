@@ -19,7 +19,7 @@ final class HomePageController extends AbstractController
         SerializerInterface $serializer
     ): Response
     {
-        $events = $eventRepository->getEvents();
+        $events = $eventRepository->findAll();
         
         // Sérialiser les événements pour JavaScript
         $eventsForJS = array_map(function($event) {
@@ -32,6 +32,7 @@ final class HomePageController extends AbstractController
                 'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
                 'creator' => $event->getCreator(),
                 'status' => $event->getEventStatus()?->getStatus(),
+                'category' => $event->getCategory(),
             ];
         }, $events);
 
