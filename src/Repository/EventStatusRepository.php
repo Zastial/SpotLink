@@ -5,15 +5,23 @@ namespace App\Repository;
 use App\Entity\EventStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 /**
  * @extends ServiceEntityRepository<EventStatus>
  */
 class EventStatusRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface  $entityManager)
     {
         parent::__construct($registry, EventStatus::class);
+        $this->entityManager = $entityManager;
+    }
+    public function save(EventStatus $eventStatus): void
+    {
+        $this->entityManager->persist($eventStatus);
+        $this->entityManager->flush();
     }
 
     //    /**
