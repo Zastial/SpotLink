@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\EventRepository;
+use App\Enum\StatusEnum;
 use App\Repository\EventStatusRepository;
 use App\Repository\StatusRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,7 +72,7 @@ final class AdminController extends AbstractController
     public function eventsToValidate(int $id, EventRepository $eventRepository, StatusRepository $statusRepository, EntityManagerInterface $entityManagerInterface): Response
     {
         $events = $eventRepository->find($id);
-        $status = $statusRepository->find(3);
+        $status = $statusRepository->find(StatusEnum::VALIDATED);
         $events->getEventStatus()->setStatus($status);
         $events->getEventStatus()->setUpdatedAt(new \DateTimeImmutable());
         $entityManagerInterface->flush();
