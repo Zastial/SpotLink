@@ -18,6 +18,7 @@ use App\Service\EventService;
 use App\Repository\UserRepository;
 use App\Repository\StatusRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Enum\StatusEnum;
 
 final class EventSubmitController extends AbstractController
 {
@@ -53,8 +54,8 @@ final class EventSubmitController extends AbstractController
                 $eventStatus->setEvent($event);
                 $eventStatus->setCreatedAt(new \DateTimeImmutable());
 
-                // Assigner le statut "CREE"
-                $status = $statusRepository->findOneBy(['name' => 'CREE']);
+                // Assigner le statut "CREATED"
+                $status = $statusRepository->find(StatusEnum::CREATED);
                 $eventStatus->setStatus($status);
                 $eventStatusRepository->save($eventStatus);
 

@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class EventFormType extends AbstractType
 {
@@ -18,7 +19,7 @@ class EventFormType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('description')
+            ->add('description', TextareaType::class)
             ->add('osm_id', HiddenType::class)
             ->add('latitude', HiddenType::class)
             ->add('longitude', HiddenType::class)
