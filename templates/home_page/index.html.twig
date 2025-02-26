@@ -3,30 +3,52 @@
 {% block title %}HomePage{% endblock %}
 
 {% block body %}
-<div class="flex flex-row p-4 max-h-screen max-w-screen">
-    <div class="w-1/3 bg-white shadow-lg rounded-lg p-6 mr-4 overflow-y-auto">
-        <ul class="list-none space-y-4">
-            {% for event in events %}
-                <li class="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all cursor-pointer">
-                    <div class="font-bold text-lg text-gray-800">
-                        {{ event.name }}{% if event.city %} - <span class="text-gray-400">{{ event.city }}</span>{% endif %}
-                    </div>
-                    <div class="text-sm text-gray-600">{{ event.description }}</div>
-                    <div class="text-sm text-gray-600">
-                        Organisateur : 
-                        {% if event.creator.username %}
-                            {{ event.creator.username }}
-                        {% else %}
-                            {{ event.creator.firstName }} {{ event.creator.lastName }}
-                        {% endif %}
-                    </div>
-                   
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+<div class="flex justify-center">
+    <div class="flex flex-row w-80 h-[75vh]">
+        <div class="w-1/3 bg-white shadow-lg rounded-lg p-6 mr-4 overflow-y-auto h-[75vh]">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-primary">Filtre par catégorie</h2>
+                <select id="categoryFilter" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">Aucune</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" style="color: {{ category.markerColor }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <ul class="list-none space-y-4">
+                {% for event in events %}
+                    <li class="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all cursor-pointer" tabindex="0" data-event-id="{{ event.id }}" data-category-id="{{ event.category.id }}">
+                        <div class="font-bold text-lg text-primary">
+                            {{ event.name|length > 20 ? event.name|slice(0, 20) ~ '...' : event.name }}{% if event.city %} - <span class="text-gray-800">{{ event.city|length > 15 ? event.city|slice(0, 15) ~ '...' : event.city }}</span>{% endif %}
+                        </div>
+                        <div class="text-sm text-gray-600 event-description">{{ event.description }}</div>
+                        <div class="text-sm text-gray-600">
+                            Organisateur : 
+                            {% if event.creator.username %}
+                                {{ event.creator.username }}
+                            {% else %}
+                                {{ event.creator.firstName }} {{ event.creator.lastName }}
+                            {% endif %}
+                        </div>
+                        <div class="text-sm mt-1">
+                            <button class="px-2 py-1 rounded-full border" style="border-color: {{ markerColors[event.id] | default('#FFC0CB') }}; color: {{ markerColors[event.id] | default('#000') }};">
+                                {{ event.category.name }}
+                            </button>
+                            <span class="text-sm rounded-full border-2 px-2 py-1">Date : {{ event.dateStart|date('Y-m-d H:i') }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if events|length == 0 %}
+                    <li class="p-4 border border-gray-300 rounded-lg text-center">
+                        Aucun événements dans cette région
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
 
-    <div id="map" class="w-2/3 "></div>
+        <div id="map" class="w-2/3 rounded-xl border border-grey-300"></div>
+    </div>
 </div>
 
 <style>
@@ -46,9 +68,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.event-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 </style>
 
-<!-- Ajouter Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
@@ -63,6 +92,7 @@
 
         var events = {{ eventsForJS|json_encode|raw }};
         var markerColors = {{ markerColors|json_encode|raw }};
+        var markers = {};
 
         events.forEach(function(event) {
             if (event.latitude && event.longitude) {
@@ -80,21 +110,71 @@
                     .addTo(map)
                     .bindPopup(`
                         <div class="popup-content">
-                            <h3 class="font-bold">${event.name}</h3>
-                            <p>${event.description}</p>
+                            <h3 class="font-bold event-text">${event.name}</h3>
+                            <p class="event-description">
+                                ${event.description.length > 100 ? event.description.substring(0, 100) + '... <a href="#" class="read-more" data-event-id="' + event.id + '">Lire la suite</a>' : event.description}
+                            </p>
                             <p class="text-sm text-gray-600">
                                 ${new Date(event.created_at).toLocaleDateString()}
                             </p>
                         </div>
                     `);
 
-                document.querySelector(`[data-event-id="${event.id}"]`)?.addEventListener('click', function() {
-                    map.setView([event.latitude, event.longitude], 13);
+                markers[event.id] = marker;
+
+                marker.on('click', function() {
+                    map.flyTo(marker.getLatLng(), 13, {
+                        duration: 1.5, // durée de l'animation en secondes
+                        easeLinearity: 0.25
+                    });
                     marker.openPopup();
                 });
             }
         });
+
+        document.querySelectorAll('li[data-event-id]').forEach(function (li) {
+            li.addEventListener('click', function () {
+                var eventId = this.getAttribute('data-event-id');
+                var marker = markers[eventId];
+                if (marker) {
+                    map.flyTo(marker.getLatLng(), 13, {
+                        duration: 1.5,
+                        easeLinearity: 0.25
+                    });
+                    marker.openPopup();
+                }
+            });
+        });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const categoryFilter = document.getElementById('categoryFilter');
+    
+    categoryFilter.addEventListener('change', function() {
+        const selectedCategoryId = this.value;
+        const eventItems = document.querySelectorAll('li[data-event-id]');
+        
+        // Filtrer la liste des événements
+        eventItems.forEach(function(item) {
+            const categoryId = item.getAttribute('data-category-id');
+            if (!selectedCategoryId || categoryId === selectedCategoryId) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Filtrer les marqueurs sur la carte
+        for (const [eventId, marker] of Object.entries(markers)) {
+            const eventElement = document.querySelector(`li[data-event-id="${eventId}"]`);
+            if (eventElement.style.display === 'none') {
+                map.removeLayer(marker);
+            } else if (!map.hasLayer(marker)) {
+                marker.addTo(map);
+            }
+        }
+    });
+});
 </script>
 
 {% endblock %}

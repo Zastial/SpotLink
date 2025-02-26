@@ -15,12 +15,14 @@ final class HomePageController extends AbstractController
     #[Route('/', name: 'app_home_page')]
     public function index(
         EventRepository $eventRepository,
+        CategoryRepository $categoryRepository,
         EventCategoryService $eventCategoryService,
         SerializerInterface $serializer
     ): Response
     {
-        $events = $eventRepository->getEvents();
-        
+        $events = $eventRepository->getAllWithStatusValidated();
+        $categories = $categoryRepository->getCategories();
+
         // Sérialiser les événements pour JavaScript
         $eventsForJS = array_map(function($event) {
             return [
@@ -32,6 +34,8 @@ final class HomePageController extends AbstractController
                 'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
                 'creator' => $event->getCreator(),
                 'status' => $event->getEventStatus()?->getStatus(),
+                'category' => $event->getCategory(),
+                'date_start' => $event->getDateStart()?->format('Y-m-d H:i:s'),
             ];
         }, $events);
 
@@ -41,11 +45,16 @@ final class HomePageController extends AbstractController
         }
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
 
+        usort($events, function($a, $b) {
+            return $a->getDateStart() <=> $b->getDateStart();
+        });
+
         return $this->render('home_page/index.html.twig', [
             'controller_name' => 'HomePageController',
             'events' => $events,
             'eventsForJS' => $eventsForJS,
             'markerColors' => $markerColors,
+            'categories' => $categories,
         ]);
     }
 
