@@ -8,7 +8,10 @@ module.exports = {
     extend: {
       colors: {
         'primary': '#2f299a',
-        'white': '#ffffff'
+        'primary-dark':'#241f78',
+        'white': '#ffffff',
+        'red': '#c41a1a',
+        'red-dark': '#a71717',
       },
       fontFamily: {
         lexend: ['"Lexend Deca"', 'sans-serif'],
