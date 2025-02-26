@@ -33,6 +33,7 @@ final class HomePageController extends AbstractController
                 'creator' => $event->getCreator(),
                 'status' => $event->getEventStatus()?->getStatus(),
                 'category' => $event->getCategory(),
+                'date_start' => $event->getDateStart()?->format('Y-m-d H:i:s'),
             ];
         }, $events);
 
@@ -41,6 +42,10 @@ final class HomePageController extends AbstractController
             $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
         }
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
+
+        usort($events, function($a, $b) {
+            return $a->getDateStart() <=> $b->getDateStart();
+        });
 
         return $this->render('home_page/index.html.twig', [
             'controller_name' => 'HomePageController',

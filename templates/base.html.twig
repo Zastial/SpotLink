@@ -14,10 +14,12 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body class="font-lexend">
+     <body class="font-lexend min-h-screen flex flex-col">
         {% include 'common/header.html.twig' %}
-        {% block body %}
-        {% endblock %}
+        <main class="flex-1">
+            {% block body %}
+            {% endblock %}
+        </main>
         {% include 'common/footer.html.twig' %}
     </body>
 </html>
