@@ -24,6 +24,21 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[] Returns an array of Event objects
      */
+    public function getAllWithStatusValidated(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.eventStatus', 'es')
+            ->innerJoin('es.status', 's')
+            ->andWhere('s.id = :statusId')
+            ->setParameter('statusId', StatusEnum::VALIDATED)
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Event[] Returns an array of Event objects
+     */
     public function getAllWithStatusAwaiting(): array
     {
         return $this->createQueryBuilder('e')

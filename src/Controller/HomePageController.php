@@ -15,12 +15,14 @@ final class HomePageController extends AbstractController
     #[Route('/', name: 'app_home_page')]
     public function index(
         EventRepository $eventRepository,
+        CategoryRepository $categoryRepository,
         EventCategoryService $eventCategoryService,
         SerializerInterface $serializer
     ): Response
     {
-        $events = $eventRepository->findAll();
-        
+        $events = $eventRepository->getAllWithStatusValidated();
+        $categories = $categoryRepository->getCategories();
+
         // Sérialiser les événements pour JavaScript
         $eventsForJS = array_map(function($event) {
             return [
@@ -52,6 +54,7 @@ final class HomePageController extends AbstractController
             'events' => $events,
             'eventsForJS' => $eventsForJS,
             'markerColors' => $markerColors,
+            'categories' => $categories,
         ]);
     }
 
