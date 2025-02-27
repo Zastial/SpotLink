@@ -4,7 +4,7 @@ namespace App\Controller;
 use App\Repository\EventRepository;
 use App\Repository\CategoryRepository;
 use App\Service\EventCategoryService;
-
+use App\Service\EventService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,12 +15,13 @@ final class HomePageController extends AbstractController
     #[Route('/', name: 'app_home_page')]
     public function index(
         EventRepository $eventRepository,
+        EventService $eventService,
         CategoryRepository $categoryRepository,
         EventCategoryService $eventCategoryService,
         SerializerInterface $serializer
     ): Response
     {
-        $events = $eventRepository->getAllWithStatusValidated();
+        $events = $eventService->getAllWithStatusValidated();
         $categories = $categoryRepository->getCategories();
 
         // Sérialiser les événements pour JavaScript
@@ -44,6 +45,7 @@ final class HomePageController extends AbstractController
             $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
         }
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
+        $icons = $this->getIcons($eventCategoryService, $eventCategoryMap);
 
         usort($events, function($a, $b) {
             return $a->getDateStart() <=> $b->getDateStart();
@@ -54,6 +56,7 @@ final class HomePageController extends AbstractController
             'events' => $events,
             'eventsForJS' => $eventsForJS,
             'markerColors' => $markerColors,
+            'icons' => $icons,
             'categories' => $categories,
         ]);
     }
@@ -62,5 +65,20 @@ final class HomePageController extends AbstractController
     {
         $markerColors = $eventCategoryService->getMarkerColors($eventCategoryMap);
         return $markerColors;
+    }
+
+    public function getIcons(EventCategoryService $eventCategoryService, array $eventCategoryMap): array
+    {
+        $icons = $eventCategoryService->getIcons($eventCategoryMap);
+        return $icons;
+    }
+
+    #[Route('/event/{id}', name: 'event_detail')]
+    public function show(EventRepository $eventRepository, int $id): Response
+    {
+        $event = $eventRepository->find($id);
+        return $this->render('event/detail.html.twig', [
+            'event' => $event,
+        ]);
     }
 }
