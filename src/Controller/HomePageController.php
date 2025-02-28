@@ -24,22 +24,6 @@ final class HomePageController extends AbstractController
         $events = $eventService->getAllWithStatusValidated();
         $categories = $categoryRepository->getCategories();
 
-        // Sérialiser les événements pour JavaScript
-        $eventsForJS = array_map(function($event) {
-            return [
-                'id' => $event->getId(),
-                'name' => $event->getName(),
-                'description' => $event->getDescription(),
-                'latitude' => $event->getLatitude(),
-                'longitude' => $event->getLongitude(),
-                'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
-                'creator' => $event->getCreator(),
-                'status' => $event->getEventStatus()?->getStatus(),
-                'category' => $event->getCategory(),
-                'date_start' => $event->getDateStart()?->format('Y-m-d H:i:s'),
-            ];
-        }, $events);
-
         $eventCategoryMap = [];
         foreach ($events as $event) {
             $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
@@ -50,6 +34,21 @@ final class HomePageController extends AbstractController
         usort($events, function($a, $b) {
             return $a->getDateStart() <=> $b->getDateStart();
         });
+
+        $eventsForJS = array_map(function($event) {
+            return [
+                'id' => $event->getId(),
+                'name' => $event->getName(),
+                'description' => $event->getDescription(),
+                'latitude' => $event->getLatitude(),
+                'longitude' => $event->getLongitude(),
+                'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
+                'creator' => $event->getCreator(),
+                'status' => $event->getEventStatus()?->getStatus(),
+                'category_name' => $event->getCategory()->getName(),
+                'date_start' => $event->getDateStart()?->format('Y-m-d H:i:s'),
+            ];
+        }, $events);
 
         return $this->render('home_page/index.html.twig', [
             'controller_name' => 'HomePageController',

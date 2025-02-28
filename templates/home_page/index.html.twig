@@ -99,6 +99,7 @@
 
         var events = {{ eventsForJS|json_encode|raw }};
         var markerColors = {{ markerColors|json_encode|raw }};
+        var icons = {{ icons|json_encode|raw }};
         var markers = {};
         let selectedItem = null;
         let isUserAction = false;
@@ -134,19 +135,53 @@
                     .bindPopup(`
                         <div class="popup-content">
                             <h3 class="font-bold event-text">${event.name}</h3>
-                            <p class="event-description">
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="px-1 py-1 rounded-full border" style="border-color: ${markerColors[event.id] || '#FFC0CB'}; color: ${markerColors[event.id] || '#000'};">
+                                    <i class="${icons[event.id]}"></i>
+                                    <span>${event.category_name}</span>
+                                </span>
+                            </div>
+                            <p class="text-sm">
                                 ${event.description.length > 100 ? event.description.substring(0, 100) + '...' : event.description}
                             </p>
-                            <div class="flex justify-between items-center">
-                                <p class="text-sm text-gray-600">
-                                    ${new Date(event.created_at).toLocaleDateString()}
-                                </p>
+                            <p class="text-sm text-gray-600">
+                                Date de l'événement : ${new Date(event.created_at).toLocaleDateString()}
+                            </p> 
+                            <div class="flex justify-between items-center mt-2">
                                 <a href="/event/${event.id}" class="text-primary hover:underline">
                                     Voir les détails
                                 </a>
+                                <i class="far fa-star favorite-star cursor-pointer" data-event-id="${event.id}" style="font-size: 1.5em; color: orange;"></i>
                             </div>
                         </div>
                     `);
+                
+                marker.on('popupopen', function() {
+                    const star = document.querySelector('.leaflet-popup-content .favorite-star');
+                    if (star) {
+                        const isFavorite = localStorage.getItem(`favorite-event-${event.id}`) === 'true';
+                        
+                        star.className = isFavorite 
+                            ? 'fas fa-star favorite-star cursor-pointer' 
+                            : 'far fa-star favorite-star cursor-pointer';
+                        
+                        star.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            
+                            const isFavoriteNow = this.classList.contains('fas');
+                            
+                            if (isFavoriteNow) {
+                                this.classList.remove('fas');
+                                this.classList.add('far');
+                                localStorage.setItem(`favorite-event-${event.id}`, 'false');
+                            } else {
+                                this.classList.remove('far');
+                                this.classList.add('fas');
+                                localStorage.setItem(`favorite-event-${event.id}`, 'true');
+                            }
+                        });
+                    }
+                });
 
                 markers[event.id] = marker;
 
