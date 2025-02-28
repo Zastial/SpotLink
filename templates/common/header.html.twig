@@ -17,12 +17,11 @@
             </button>
         </div>
     </div>
-    
-    <div class="hidden sm:flex bg-white px-6 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
-        <a href="/account">
+    <a href="/user_informations">
+        <div class="hidden sm:flex bg-white px-6 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
             <i class="fa-solid fa-user text-primary text-xl"></i>
-        </a>
-    </div>
+        </div>
+    </a>
 </header>
 
 <div id="sideMenu" class="rounded-3xl fixed top-0 right-0 bg-white w-64 transform translate-x-full transition-transform duration-300 ease-in-out shadow-lg z-50">
@@ -35,23 +34,25 @@
     <nav class="flex flex-col p-4 gap-4">
         <a href="/" class="text-lg text-gray-800 hover:underline">Voir la carte</a>
         <a href="/" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
-        <a href="/account" class="text-lg text-gray-800 hover:underline">Mon compte</a>
+        <a href="/user_informations" class="text-lg text-gray-800 hover:underline">Mon compte</a>
     </nav>
 </div>
 
 <script>
-    const burgerMenuBtn = document.getElementById('burgerMenuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const closeMenuBtn = document.getElementById('closeMenuBtn');
-    burgerMenuBtn.addEventListener('click', () => {
-        sideMenu.classList.remove('translate-x-full');
-    });
-    closeMenuBtn.addEventListener('click', () => {
-        sideMenu.classList.add('translate-x-full');
-    });
-    window.addEventListener('click', (e) => {
-        if (!sideMenu.contains(e.target) && !burgerMenuBtn.contains(e.target)) {
+    document.addEventListener("turbo:load", function() {
+        const burgerMenuBtn = document.getElementById('burgerMenuBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        burgerMenuBtn.addEventListener('click', () => {
+            sideMenu.classList.remove('translate-x-full');
+        });
+        closeMenuBtn.addEventListener('click', () => {
             sideMenu.classList.add('translate-x-full');
-        }
+        });
+        window.addEventListener('click', (e) => {
+            if (!sideMenu.contains(e.target) && !burgerMenuBtn.contains(e.target)) {
+                sideMenu.classList.add('translate-x-full');
+            }
+        });
     });
 </script>

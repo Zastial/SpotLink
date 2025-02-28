@@ -7,6 +7,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,14 +21,7 @@ class UserInformationsFormType extends AbstractType
             ->add('username')
             ->add('first_name')
             ->add('last_name')
-            ->add('email')
-            ->add('password', PasswordType::class, [
-                'label' => 'Mot de passe',
-                'attr' => [
-                    'autocomplete' => 'new-password',
-                ],
-            ])
-            ->add('created_at', HiddenType::class)
+            ->add('email', EmailType::class)
             ->add('is_verify',HiddenType::class)
         ;
     }
