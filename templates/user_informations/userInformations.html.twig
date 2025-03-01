@@ -5,29 +5,29 @@
 {% block body %}
     <div class="flex justify-center items-center min-h-screen">
         <div class="w-80 bg-white p-6 rounded-lg shadow-lg flex flex-col gap-8">
-            {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+            {{ form_start(userform, {'attr': {'class': 'space-y-4'}}) }}
                 <div class="flex items-center mb-5">
                     <i class="fa-solid fa-user text-2xl mr-2"></i>
                     <h2 class="text-2xl font-bold text-gray-800">Informations de compte</h2>
                 </div>
                 <div>
-                    {{ form_label(form.username, "Nom d'utilisateur*", {'label_attr': {'class': 'label-field'}}) }}
-                    {{ form_widget(form.username, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
+                    {{ form_label(userform.username, "Nom d'utilisateur*", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(userform.username, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        {{ form_label(form.first_name, "Prénom*", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.first_name, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_label(userform.first_name, "Prénom*", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(userform.first_name, {'attr': {'class': 'input-field'}}) }}
                     </div>
                     <div>
-                        {{ form_label(form.last_name, "Nom*", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.last_name, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
+                        {{ form_label(userform.last_name, "Nom*", {'label_attr': {'class': 'label-field'}}) }}
+                        {{ form_widget(userform.last_name, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
                     </div>
                 </div>
                 <div>
-                    {{ form_label(form.email, "Adresse e-mail*", {'label_attr': {'class': 'label-field'}}) }}
-                    {{ form_widget(form.email, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
+                    {{ form_label(userform.email, "Adresse e-mail*", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(userform.email, {'attr': {'class': 'input-field', 'required': 'required'}}) }}
                 </div>
                 <p> * Champs obligatoires </p>    
                 <div class="flex justify-center"> 
@@ -35,23 +35,31 @@
                         Modifier les informations
                     </button>
                 </div>
-            {{ form_end(form) }}
+            {{ form_end(userform) }}
+            {{ form_start(passwordform, {'attr': {'class': 'space-y-4'}}) }}
             <div class="space-y-4">
                 <div class="flex items-center mb-5">
                     <i class="fa-solid fa-lock text-2xl mr-2"></i>
                     <h2 class="text-2xl font-bold text-gray-800">Modifier le mot de passe</h2>
                 </div>
-                <div> 
-                    <label for="password" class="label-field">Mot de passe</label>
-                    <input type="password" id="password" name="password" class="input-field">
-                </div> 
+                <div>
+                    {{ form_label(passwordform.password, "Mot de passe", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(passwordform.password, {'attr': {'class': 'input-field'}}) }}
+                    {{ form_errors(passwordform.password) }}
+                </div>
+
+                <div>
+                    {{ form_label(passwordform.confirmPassword, "Confirmer le mot de passe", {'label_attr': {'class': 'label-field'}}) }}
+                    {{ form_widget(passwordform.confirmPassword, {'attr': {'class': 'input-field'}}) }}
+                    {{ form_errors(passwordform.confirmPassword) }}
+                </div>
                 <div class="flex justify-center"> 
                     <button name="update_password" class="w-70 sm:w-50 bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
                         Modifier le mot de passe
                     </button>
                 </div>
             </div>
-
+            {{ form_end(passwordform) }}
             <div class="space-y-4">
                 <div class="flex items-center mb-5">
                     <i class="fa-solid fa-trash text-2xl mr-2"></i>

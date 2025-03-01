@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\ChangePasswordFormType;
 use App\Form\UserInformationsFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,14 +18,16 @@ final class UserInformationsController extends AbstractController
     {
         #TODO : Remplacer par user connected
         $user = $userRepository->findOneBy([], ['id' => 'ASC']);
-        $form = $this->createForm(UserInformationsFormType::class, $user);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        $userform = $this->createForm(UserInformationsFormType::class, $user);
+        $passwordform = $this->createForm(ChangePasswordFormType::class);
+        $userform->handleRequest($request);
+        if ($userform->isSubmitted() && $userform->isValid()) {
             $userRepository->save($user);
         }
 
         return $this->render('user_informations/userInformations.html.twig', [
-            'form' => $form->createView(),
+            'userform' => $userform->createView(),
+            'passwordform' => $passwordform->createView(),
         ]);
     }
 
