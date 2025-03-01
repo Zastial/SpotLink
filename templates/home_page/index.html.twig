@@ -90,26 +90,34 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map('map').setView([46.603354, 1.888334], 6); // Coordonnées pour la France
-
+        // Initialize map centered on France
+        var map = L.map('map').setView([46.603354, 1.888334], 6);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(map);
 
-        var events = {{ eventsForJS|json_encode|raw }};
-        var markerColors = {{ markerColors|json_encode|raw }};
-        var icons = {{ icons|json_encode|raw }};
+        // Data passed from Symfony controller
+        var events = {{ eventsForJS|json_encode|raw }}; // Event data
+        var markerColors = {{ markerColors|json_encode|raw }}; // Colors for different event categories
+        var icons = {{ icons|json_encode|raw }}; // Icons for different event categories
+        
+        // State management
         var markers = {};
         let selectedItem = null;
         let isUserAction = false;
-
-        function updateSelection(newSelectedItem) {
-            console.log('UpdateSelection appelé', newSelectedItem, 'isUserAction:', isUserAction);
-            
+        
+        /**
+         * Update the visual selection state of list items
+         * @param {HTMLElement} newSelectedItem - The list item to select, or null to clear selection
+         */
+        function updateSelection(newSelectedItem) {            
+            // Remove highlighting from previously selected item
             if (selectedItem) {
                 selectedItem.classList.remove('bg-gray-100');
             }
+            
+            // Add highlighting to newly selected item
             if (newSelectedItem) {
                 newSelectedItem.classList.add('bg-gray-100');
                 selectedItem = newSelectedItem;
@@ -118,10 +126,11 @@
             }
         }
 
+        // Create markers for each event with geographic coordinates
         events.forEach(function(event) {
             if (event.latitude && event.longitude) {
-                var color = markerColors[event.id] || "#FFC0CB"; // Défaut : rose
-
+                // Create marker & use marker color based on category (DB stored)
+                var color = markerColors[event.id] || "#FFC0CB";
                 var customIcon = L.divIcon({
                     className: "custom-marker",
                     html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
@@ -130,6 +139,7 @@
                     popupAnchor: [0, -10]
                 });
 
+                // Create marker with popup content
                 var marker = L.marker([event.latitude, event.longitude], { icon: customIcon })
                     .addTo(map)
                     .bindPopup(`
@@ -156,17 +166,27 @@
                         </div>
                     `);
                 
-                marker.on('popupopen', function() {
-                    const star = document.querySelector('.leaflet-popup-content .favorite-star');
+                // Handle popup opening to manage favorite star functionality
+                marker.on('popupopen', function(e) {
+                    const popup = e.popup;
+                    const popupContent = popup.getElement();
+                    const star = popupContent.querySelector('.favorite-star');
+                    
                     if (star) {
+                        // Remove any existing event listeners to prevent duplicates
+                        star.replaceWith(star.cloneNode(true));
+                        const newStar = popupContent.querySelector('.favorite-star');
+                        
+                        // WAITING FOR USER TO BE IMPLEMENTED
+                        // FOR NOW, STORE IN LOCAL STORAGE
                         const isFavorite = localStorage.getItem(`favorite-event-${event.id}`) === 'true';
                         
-                        star.className = isFavorite 
-                            ? 'fas fa-star favorite-star cursor-pointer' 
-                            : 'far fa-star favorite-star cursor-pointer';
+                        newStar.className = isFavorite 
+                            ? 'fas fa-star favorite-star cursor-pointer' // Solid star
+                            : 'far fa-star favorite-star cursor-pointer'; // Outline star
                         
-                        star.addEventListener('click', function(e) {
-                            e.stopPropagation();
+                        newStar.addEventListener('click', function(e) {
+                            e.stopPropagation(); // Prevent popup from closing when star is clicked
                             
                             const isFavoriteNow = this.classList.contains('fas');
                             
@@ -182,15 +202,16 @@
                         });
                     }
                 });
-
                 markers[event.id] = marker;
 
+                // Handle popup close
                 marker.on('popupclose', function() {
                     if (!isUserAction) {
                         updateSelection(null);
                     }
                 });
 
+                // Handle marker click to focus map
                 marker.on('click', function() {
                     map.flyTo(marker.getLatLng(), 13, {
                         duration: 1.5,
@@ -201,6 +222,7 @@
                     const listItem = document.querySelector(`li[data-event-id="${event.id}"]`);
                     if (listItem) {
                         updateSelection(listItem);
+                        // Scroll list to show selected item
                         listItem.scrollIntoView({
                             behavior: 'smooth',
                             block: 'center'
@@ -210,15 +232,18 @@
             }
         });
 
+        // Add click handlers to list items
         document.querySelectorAll('li[data-event-id]').forEach(function (li) {
             li.addEventListener('click', function () {
                 isUserAction = true;
                 
+                // Get event ID and corresponding marker
                 var eventId = this.getAttribute('data-event-id');
                 var marker = markers[eventId];
                 
                 updateSelection(this);
                 
+                // Center map on selected marker and show popup
                 if (marker) {
                     map.flyTo(marker.getLatLng(), 13, {
                         duration: 1.5,
@@ -233,11 +258,13 @@
             });
         });
 
+        // Handle category filtering
         const categoryFilter = document.getElementById('categoryFilter');
         categoryFilter.addEventListener('change', function() {
             const selectedCategoryId = this.value;
             const eventItems = document.querySelectorAll('li[data-event-id]');
             
+            // Filter list items by selected category
             eventItems.forEach(function(item) {
                 const categoryId = item.getAttribute('data-category-id');
                 if (!selectedCategoryId || categoryId === selectedCategoryId) {
@@ -247,6 +274,7 @@
                 }
             });
 
+            // Update map markers to match filtered list
             for (const [eventId, marker] of Object.entries(markers)) {
                 const eventElement = document.querySelector(`li[data-event-id="${eventId}"]`);
                 if (eventElement.style.display === 'none') {

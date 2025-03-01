@@ -12,9 +12,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class HomePageController extends AbstractController
 {
+    // The route for the home page
     #[Route('/', name: 'app_home_page')]
     public function index(
-        EventRepository $eventRepository,
         EventService $eventService,
         CategoryRepository $categoryRepository,
         EventCategoryService $eventCategoryService,
@@ -24,7 +24,7 @@ final class HomePageController extends AbstractController
         $events = $eventService->getAllWithStatusValidated();
         $categories = $categoryRepository->getCategories();
 
-        $eventCategoryMap = [];
+        $eventCategoryMap = []; // Used to get marker colors and icons
         foreach ($events as $event) {
             $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
         }
@@ -33,7 +33,7 @@ final class HomePageController extends AbstractController
 
         usort($events, function($a, $b) {
             return $a->getDateStart() <=> $b->getDateStart();
-        });
+        }); // Sort events by date to show the closest first
 
         $eventsForJS = array_map(function($event) {
             return [
@@ -60,18 +60,21 @@ final class HomePageController extends AbstractController
         ]);
     }
 
+    // Get the marker colors for the events shown on the map
     public function getMarkerColors(EventCategoryService $eventCategoryService, array $eventCategoryMap): array
     {
         $markerColors = $eventCategoryService->getMarkerColors($eventCategoryMap);
         return $markerColors;
     }
 
+    // Get the icons for the events shown on the map & card
     public function getIcons(EventCategoryService $eventCategoryService, array $eventCategoryMap): array
     {
         $icons = $eventCategoryService->getIcons($eventCategoryMap);
         return $icons;
     }
 
+    // The route for the detail page of an event
     #[Route('/event/{id}', name: 'event_detail')]
     public function show(EventRepository $eventRepository, int $id): Response
     {
