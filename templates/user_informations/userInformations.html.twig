@@ -5,7 +5,7 @@
 {% block body %}
     <div class="flex justify-center items-center min-h-screen">
         <div class="w-80 bg-white p-6 rounded-lg shadow-lg flex flex-col gap-8">
-            {{ form_start(userform, {'attr': {'class': 'space-y-4'}}) }}
+            {{ form_start(userform, {'attr': {'class': 'space-y-4', 'data-turbo': 'false', 'id': 'user_form'}}) }}
                 <div class="flex items-center mb-5">
                     <i class="fa-solid fa-user text-2xl mr-2"></i>
                     <h2 class="text-2xl font-bold text-gray-800">Informations de compte</h2>
@@ -36,30 +36,29 @@
                     </button>
                 </div>
             {{ form_end(userform) }}
-            {{ form_start(passwordform, {'attr': {'class': 'space-y-4'}}) }}
             <div class="space-y-4">
                 <div class="flex items-center mb-5">
                     <i class="fa-solid fa-lock text-2xl mr-2"></i>
                     <h2 class="text-2xl font-bold text-gray-800">Modifier le mot de passe</h2>
                 </div>
-                <div>
-                    {{ form_label(passwordform.password, "Mot de passe", {'label_attr': {'class': 'label-field'}}) }}
-                    {{ form_widget(passwordform.password, {'attr': {'class': 'input-field'}}) }}
-                    {{ form_errors(passwordform.password) }}
-                </div>
+                <form action="{{ path('change_password') }}" class="space-y-4" method="POST" id="change_password_form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('change_password') }}">
+                    <div>
+                        <label for="password_field" class="label-field">Mot de passe</label>
+                        <input type="password" id="password_field" name="password_field" class="input-field" required="required">
+                    </div>
 
-                <div>
-                    {{ form_label(passwordform.confirmPassword, "Confirmer le mot de passe", {'label_attr': {'class': 'label-field'}}) }}
-                    {{ form_widget(passwordform.confirmPassword, {'attr': {'class': 'input-field'}}) }}
-                    {{ form_errors(passwordform.confirmPassword) }}
-                </div>
-                <div class="flex justify-center"> 
-                    <button name="update_password" class="w-70 sm:w-50 bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
-                        Modifier le mot de passe
-                    </button>
-                </div>
+                    <div>
+                        <label for="password_confirm_field" class="label-field">Confirmer le mot de passe</label>
+                        <input type="password" id="password_confirm_field" name="password_confirm_field" class="input-field" required>
+                    </div>
+                    <div class="flex justify-center"> 
+                        <button type="submit" name="update_password" class="w-70 sm:w-50 bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
+                            Modifier le mot de passe
+                        </button>
+                    </div>
+                </form>
             </div>
-            {{ form_end(passwordform) }}
             <div class="space-y-4">
                 <div class="flex items-center mb-5">
                     <i class="fa-solid fa-trash text-2xl mr-2"></i>
@@ -73,4 +72,24 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        $('#change_password_form').on('submit', function(e) {
+            const passwordField = document.getElementById('password_field').value
+            const confirmPasswordField = document.getElementById('password_confirm_field').value;
+            if (passwordField.length < 6) {
+                e.preventDefault();
+                alert("Le mot de passe doit contenir au moins 6 caractères.");
+                return
+            }
+            if (passwordField !== confirmPasswordField) {
+                e.preventDefault();
+                alert("Les mots de passe ne correspondent pas.");
+                return
+            }
+        });
+    });
+</script>
 {% endblock %}
