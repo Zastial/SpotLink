@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Utils\CustomResponse;
 
 final class RegistrationController extends AbstractController
 {
@@ -39,10 +40,10 @@ final class RegistrationController extends AbstractController
                 $password = $form->get('password')->getData();
     
                 // Sauvegarde de l'utilisateur en base de données
-                $success = $this->registrationService->register($user, $password);
+                $response = $this->registrationService->register($user, $password);
     
-                if (!$success) {
-                    $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription.');
+                if (!$response->success) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription : ' . $response->message);
                     return $this->redirectToRoute('register');
                 }
     

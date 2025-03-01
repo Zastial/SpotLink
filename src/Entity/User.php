@@ -46,7 +46,7 @@ class User implements PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $created_at = null;
 
     #[ORM\Column]
-    private ?bool $is_verify = null;
+    private bool $is_verify = false;
 
     /**
      * @var Collection<int, Event>

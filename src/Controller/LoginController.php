@@ -62,10 +62,11 @@ final class LoginController extends AbstractController
             ]);
 
         } catch(\Exception $e) {
+            echo "<script>console.log(' Erreur ')</script>";
+            echo "<script>console.log('".$e->getMessage()."')</script>";
             // TODO pages d'erreur 
             // $this->addFlash('error', 'Une erreur est survenue lors de la connexion. Veuillez contacter votre administrateur.');
             // return $this->redirectToRoute('error_page');  // Page d'erreur personnalisée
         }
-        
     }
 }
