@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ChangePasswordFormType extends AbstractType
 {
@@ -42,5 +43,16 @@ class ChangePasswordFormType extends AbstractType
         $resolver->setDefaults([
             // Configure your form options here
         ]);
+    }
+
+    public function validatePasswordMatch($confirmPassword, ExecutionContextInterface $context): void
+    {
+        $form = $context->getRoot(); // Récupérer le formulaire parent
+        $password = $form->get('password')->getData();
+
+        if ($password !== $confirmPassword) {
+            $form->get('confirmPassword')->addError(new \Symfony\Component\Form\FormError('Les mots de passe ne correspondent pas.'));
+
+        }
     }
 }
