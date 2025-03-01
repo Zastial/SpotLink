@@ -27,4 +27,9 @@ class EventService
     {
         return $this->eventRepository->findEventsByDate($date);
     }
+
+    public function getAllWithStatusValidated(): array
+    {
+        return $this->eventRepository->getAllWithStatusValidated();
+    }
 }
