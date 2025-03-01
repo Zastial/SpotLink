@@ -35,7 +35,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Les pages de login et d'inscription sont accessibles anonymement
-        - { path: ^/(login|register), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(login|register|home), roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }

@@ -15,7 +15,9 @@ use Exception;
 use App\Entity\User;
 use App\Const\AppConst;
 
-
+/**
+ * Classe JwtService permettant de gérer la création et validationdes tokens JWT.
+ */
 class JwtService
 {
     private Configuration $config;
