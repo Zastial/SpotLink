@@ -41,7 +41,7 @@ class User
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator')]
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', cascade: ['persist', 'remove'])]
     private Collection $events;
 
     /**
