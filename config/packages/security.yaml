@@ -5,28 +5,43 @@ security:
         App\Entity\User:
             algorithm: bcrypt
             cost: 12
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # Votre provider d’utilisateurs permettant d'identifier un utilisateur à partir de son email
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            lazy: true
-            provider: users_in_memory
+            pattern: ^/
+            stateless: true
+            # On utilise notre authentificateur personnalisé pour récupérer le token depuis le cookie
+            custom_authenticators:
+                - App\Security\JwtAuthenticator
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+            # Gestion pour la session PHP mais nous utilisons le JWT
+            # logout:
+            #     path: /logout
+            #     # Vous pouvez ajouter un callback pour supprimer le cookie de déconnexion
+            #     invalidate_session: false
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # Les pages de login et d'inscription sont accessibles anonymement
+        - { path: ^/(login|register), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
+        
+        # Le reste des pages nécessite d'être connecté (par exemple ROLE_USER)
+        - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:

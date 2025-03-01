@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Security;
 
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Token\Plain;
@@ -13,6 +13,7 @@ use Lcobucci\Clock\SystemClock;
 use DateTimeImmutable;
 use Exception;
 use App\Entity\User;
+use App\Const\AppConst;
 
 
 class JwtService
@@ -23,7 +24,7 @@ class JwtService
     {
         $this->config = Configuration::forSymmetricSigner(
             new Sha256(),
-            InMemory::plainText('votre-clé-sécurisée-de-256-bits')
+            InMemory::plainText($_ENV['JWT_SECRET_KEY'])
         );
     }
 
@@ -33,8 +34,8 @@ class JwtService
         $expiresAt = $now->modify('+1 hour');
 
         return $this->config->builder()
-            ->issuedBy('votre-application')
-            ->permittedFor('votre-application')
+            ->issuedBy(AppConst::APP_NAME)
+            ->permittedFor(AppConst::APP_NAME)
             ->identifiedBy(bin2hex(random_bytes(16)), true)
             ->issuedAt($now)
             ->canOnlyBeUsedAfter($now)
@@ -52,7 +53,7 @@ class JwtService
             }
 
             $constraints = [
-                new IssuedBy('votre-application'),
+                new IssuedBy(AppConst::APP_NAME),
                 new LooseValidAt(SystemClock::fromUTC()),
             ];
 

@@ -3,8 +3,7 @@
 namespace App\Controller;
 use App\Repository\EventRepository;
 use App\Repository\CategoryRepository;
-use App\Service\EventCategoryService;
-
+use App\Services\EventCategoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
