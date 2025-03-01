@@ -34,7 +34,7 @@ class JwtAuthenticator extends AbstractAuthenticator
     public function supports(Request $request): bool
     {
         // Pas besoin d'authentification pour ces routes
-        if (preg_match('#^/(login|register/home)#', $request->getPathInfo())) {
+        if (preg_match('#^/(login|register|home)#', $request->getPathInfo())) {
             return false;
         }
         
@@ -79,17 +79,17 @@ class JwtAuthenticator extends AbstractAuthenticator
         // Cas où l'utilisateur n'a pas de token JWT
         if ($exception instanceof AuthenticationCredentialsNotFoundException) {
             // Rediriger vers la page de login si le token n'est pas présent
-            return new RedirectResponse($this->generateUrl('login'));
+            return new RedirectResponse($this->generateUrl('app_login'));
         }
 
         // Cas où l'utilisateur n'a pas le rôle nécessaire
         if ($exception instanceof AccessDeniedException) {
             // Rediriger vers la page de login (ou une page d'erreur)
-            return new RedirectResponse($this->generateUrl('login'));  // Vous pouvez aussi définir une page d'erreur spécifique ici
+            return new RedirectResponse($this->generateUrl('app_login'));  // Vous pouvez aussi définir une page d'erreur spécifique ici
         }
 
         // Si l'exception est de type générique, renvoyer une réponse 401 (Non autorisé) avec un message d'erreur
-        return new RedirectResponse($this->generateUrl('login'));
+        return new RedirectResponse($this->generateUrl('app_login'));
     }
 
     /**

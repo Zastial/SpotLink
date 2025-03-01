@@ -27,7 +27,7 @@ final class LoginController extends AbstractController
     }
 
 
-    #[Route('/login', name: 'login')]
+    #[Route('/login', name: 'app_login')]
     public function login(Request $request): Response
     {
         try {
@@ -42,7 +42,7 @@ final class LoginController extends AbstractController
 
                 if (!$success) {
                     $this->addFlash('error', 'Une erreur est survenue lors de la connexion.');
-                    return $this->redirectToRoute('login');
+                    return $this->redirectToRoute('app_login');
                 }
 
                 $this->addFlash('success', 'Connexion réussie.');

@@ -47,7 +47,7 @@ final class RegistrationController extends AbstractController
                 }
     
                 $this->addFlash('success', 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.');
-                return $this->redirectToRoute('login');
+                return $this->redirectToRoute('app_login');
             }
     
             // Si le formulaire n'est pas valide, les erreurs seront automatiquement attachées au formulaire
