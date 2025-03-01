@@ -24,7 +24,7 @@ ALTER DATABASE "SPOTLINK" OWNER TO spotlink;
 
 To create a migration :
 ```
-php bin/console make:migration 
+php bin/console make:migration
 ```
 
 To play the migrations :

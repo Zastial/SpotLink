@@ -14,14 +14,9 @@ class EventCategoryService
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function getCategories(): array
-    {
-        return $this->categoryRepository->getCategories();
-    }
-
     public function getMarkerColors(array $eventCategoryMap): array
     {
-        $categories = $this->getCategories();
+        $categories = $this->categoryRepository->getCategories();
         $markerColors = [];
 
         foreach ($eventCategoryMap as $eventId => $categoryName) {

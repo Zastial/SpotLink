@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ADMIN - EVENTS
+{% endblock %}
+
+{% block body %}
+
+	<div class="flex flex-col items-center">
+		<h1 class="pt-5 pb-5 text-lg">Liste des évènements à classifier</h1>
+
+		<form method="GET" class="mb-4 flex space-x-4 pb-5">
+			{# <input type="text" name="search" placeholder="Rechercher un événement" value="{{ search }}" class="border p-2 rounded"> #}
+			<select name="status" class="border p-2 rounded">
+				<option value=-1>Tous les statuts</option>
+				<option value=2 {% if status == 2 %} selected {% endif %}>En attente</option>
+				<option value=3 {% if status == 3 %} selected {% endif %}>Valide</option>
+				<option value=4 {% if status == 4 %} selected {% endif %}>Refus Total</option>
+                <option value=5 {% if status == 5 %} selected {% endif %}>Refus Partiel</option>
+			</select>
+
+			<button type="submit" class="bg-primary text-white px-4 py-2 rounded">Filtrer</button>
+		</form>
+
+		<table class="min-w-[90%] border border-gray shadow-lg rounded-lg pt-5">
+			<tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+				<th class="py-3 px-6 text-left">Id</th>
+				<th class="py-3 px-6 text-left">Catégorie</th>
+				<th class="py-3 px-6 text-left">Titre</th>
+				<th class="py-3 px-6 text-left">Description</th>
+				<th class="py-3 px-6 text-left">Adresse</th>
+                <th class="py-3 px-6 text-left">Status</th>
+				<th class="py-3 px-6 text-left">Date MAJ</th>
+				{# <th class="py-3 px-6 text-left">Date Création</th>
+				            <th class="py-3 px-6 text-left">Date Début</th>
+				            <th class="py-3 px-6 text-left">Date Fin</th>
+				             #}
+				<th class="py-3 px-6 text-left">Validation</th>
+			</tr>
+			{% for event in events %}
+				<tr class="border-b border-gray-200 hover:bg-gray-100">
+					<td class="py-3 px-6 text-left">{{ event.id }}</td>
+					<td class="py-3 px-6 text-left">{{ event.category.name }}</td>
+					<td class="py-3 px-6 text-left">{{ event.name }}</td>
+					<td class="py-3 px-6 text-left">{{ event.description }}</td>
+					<td class="py-3 px-6 text-left">{{ event.locationName }}</td>
+                    <td class="py-3 px-6 text-left">{{ event.eventStatus.status.name }}</td>
+					<td class="py-3 px-6 text-left">{{ event.eventStatus.updatedAt|date('d-m-Y H:i:s') }}</td>
+					{# <td class="py-3 px-6 text-left">{{ event.createdAt|date('Y-m-d H:i:s') }}</td>
+					            <td class="py-3 px-6 text-left">{{ event.dateStart|date('Y-m-d H:i:s') }}</td>
+					            <td class="py-3 px-6 text-left">{{ event.dateEnd|date('Y-m-d H:i:s') }}</td>
+					             #}
+					<td>
+						{# <a href="{{ path('admin_event_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
+						                <a href="{{ path('admin_event_delete', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</a> #}
+						{% if event.eventStatus.status.id == 2 %}
+						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
+						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Refuser</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% endblock %}

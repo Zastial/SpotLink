@@ -8,21 +8,24 @@
         <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;600&display=swap" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+        <!-- JS Select2 + jQuery -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
         {% endblock %}
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body class="font-lexend">
+     <body class="font-lexend min-h-screen flex flex-col">
         {% include 'common/header.html.twig' %}
-        
-        {% include 'common/flash/flash_message.html.twig' %}
-
-
-        {% block body %}{% endblock %}
-
-
+        <main class="flex-1">
+            {% include 'common/flash/flash_message.html.twig' %}
+            {% block body %}
+            {% endblock %}
+        </main>
         {% include 'common/footer.html.twig' %}
     </body>
 </html>
