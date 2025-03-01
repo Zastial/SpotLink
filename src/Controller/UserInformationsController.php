@@ -24,6 +24,10 @@ final class UserInformationsController extends AbstractController
 
         $userform->handleRequest($request);
         if ($userform->isSubmitted() && $userform->isValid()) {
+            #TODO : Remplacer par une notif utilisateur
+            if (!$user) {
+                throw new \Exception("L'utilisateur est introuvable");
+            }
             $userRepository->save($user);
         }
 
@@ -38,6 +42,10 @@ final class UserInformationsController extends AbstractController
     {
         #TODO : Remplacer par user connected
         $user = $userRepository->findOneBy([], ['id' => 'ASC']);
+        if (!$user) {
+            #TODO : Remplacer par une notif utilisateur
+            throw new \Exception("Le compte est introuvable");
+        }
         $userRepository->delete($user);
         return $this->redirectToRoute('app_home_page');
     }
@@ -50,16 +58,17 @@ final class UserInformationsController extends AbstractController
         $data = $request->request->all();
         $plainPassword = $data['password_field'];
         $user = $userRepository->findOneBy([], ['id' => 'ASC']);
-        
+
         if (!$this->isCsrfTokenValid('change_password', $request->request->get('_token'))) {
-            throw new \Exception('Invalid CSRF token');
+            #TODO : Remplacer par une notif utilisateur
+            throw new \Exception('Le CSRF token est invalide');
         }
         if (!$user) {
-            return $this->redirectToRoute('app_login');
+            #TODO : Remplacer par une notif utilisateur
+            throw new \Exception("L'utilisateur est introuvable");
         }else{
             $user->setPassword($plainPassword);
             $userRepository->save($user);
-            $this->addFlash('success', 'Votre mot de passe a été modifié avec succès.');   
         }
         return $this->redirectToRoute('user_informations');
     }
