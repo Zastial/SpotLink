@@ -25,34 +25,32 @@ class ChangePasswordFormType extends AbstractType
                         'minMessage' => 'Le mot de passe doit contenir au moins 6 caractères.',
                     ]),
                 ],
-            ])            
+            ])
             ->add('confirmPassword', PasswordType::class, [
                 'label' => 'Confirmer votre mot de passe',
-                'mapped' => false,                       // Ne sera pas sauvegardé, a manipuler dans le controller
+                'mapped' => false,
                 'attr' => ['placeholder' => 'Confirmez votre mot de passe'],
                 'constraints' => [
                     new Assert\NotBlank(['message' => 'Veuillez confirmer votre mot de passe.']),
-                    new Assert\Callback([$this, 'validatePasswordMatch'])
                 ],
             ]);
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'validation_groups' => function ($form) {
+                return ['Default']; // Activation de la validation
+            },
         ]);
     }
 
-    public function validatePasswordMatch($confirmPassword, ExecutionContextInterface $context): void
+    public function validatePasswordMatch($data, ExecutionContextInterface $context): void
     {
-        $form = $context->getRoot(); // Récupérer le formulaire parent
-        $password = $form->get('password')->getData();
-
-        if ($password !== $confirmPassword) {
-            $form->get('confirmPassword')->addError(new \Symfony\Component\Form\FormError('Les mots de passe ne correspondent pas.'));
-
+        if ($data['password'] !== $data['confirmPassword']) {
+            $context->buildViolation("Les mots de passe ne correspondent pas.")
+                ->atPath('confirmPassword')
+                ->addViolation();
         }
     }
 }
