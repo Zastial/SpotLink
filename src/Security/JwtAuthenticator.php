@@ -33,6 +33,7 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): bool
     {
+
         // Pas besoin d'authentification pour ces routes
         if (preg_match('#^/(login|register|home)#', $request->getPathInfo())) {
             return false;
@@ -43,6 +44,7 @@ class JwtAuthenticator extends AbstractAuthenticator
 
         $authHeader = $request->headers->get('Authorization');
         if (!$authHeader) {
+
             return false;  // Aucun jeton JWT dans l'en-tête Authorization
         }
 
@@ -58,6 +60,7 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function authenticate(Request $request): Passport
     {
+        echo "<script>console.log(' starting to authenticate');</script>";
         $authHeader = $request->headers->get('Authorization');
         $token = substr($authHeader, 7);
 

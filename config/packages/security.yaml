@@ -42,11 +42,11 @@ security:
         # Les pages de login home et inscription sont accessibles anonymement
         - { path: ^/(login|register|home), roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ADMIN }
+        - { path: ^/profile, roles: USER }
         
         # Le reste des pages nécessite d'être connecté (par exemple ROLE_USER)
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/, roles: USER }
 
 when@test:
     security:
