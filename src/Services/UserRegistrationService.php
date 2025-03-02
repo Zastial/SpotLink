@@ -10,6 +10,10 @@ use App\Utils\CustomResponse;
 use App\Entity\Role;
 use App\Enum\Role as RoleEnum;
 
+
+/**
+ * Service de gestion de l'inscription des utilisateurs.
+ */
 class UserRegistrationService implements UserRegistrationServiceInterface
 {
     private EntityManagerInterface $entityManager;
@@ -21,6 +25,12 @@ class UserRegistrationService implements UserRegistrationServiceInterface
         $this->passwordHasher = $passwordHasher;
     }
 
+    /**
+     * Enregistrer un nouvel utilisateur.
+     * @param User $user L'utilisateur à enregistrer.
+     * @param string $password Le mot de passe de l'utilisateur.
+     * @return CustomResponse La réponse de l'opération.
+     */
     public function register(User $user, String $password): CustomResponse
     {
         try {
@@ -38,8 +48,6 @@ class UserRegistrationService implements UserRegistrationServiceInterface
                 // Affecter le rôle à l'utilisateur
                 $user->setRole($roleUser);
             }
-
-           
 
             // Enregistrer l'utilisateur dans la base de données
             $this->entityManager->persist($user);

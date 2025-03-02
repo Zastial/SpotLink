@@ -61,19 +61,18 @@ final class LoginController extends AbstractController
                 // Récupérer la date d'expiration du token
                 $expiresAt = $token->claims()->get('exp');
 
-                 // Créer le cookie avec l'option HttpOnly pour la sécurité
+                 // Créer qui sera envoyé automatiquement avec les requêtes de l'utilisateur
                 $cookie = Cookie::create('Bearer',
                     $token->toString(),
                     $expiresAt,
                     '/', // Valide sur toute l'app
                     null, 
                     false, // Envoyer uniquement le cookie en HTTPS
-                    false, // Autoriser le cookie que sur mon site
-                    true 
+                    false, // Peut être défini à 'None' pour autoriser le cookie sur des sites tiers
+                    true  // Singature
                 );
-                // Ce cookie sera envoyé avec les requêtes de l'utilisateur
 
-                // Rediriger vers la page d'accueil ou le dashboard
+                // Rediriger vers la page d'accueil
                 $response = $this->redirectToRoute('app_home_page');
                 $response->headers->setCookie($cookie);
                 return $response;

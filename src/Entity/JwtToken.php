@@ -5,6 +5,13 @@ namespace App\Entity;
 use App\Repository\JwtTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
+/**
+ * Remarque, le JWT Token n'est pas censé être stocké en base 
+ * toute la partie dans user, repo concernant le token devrait être supprimé
+ * Cependant, on pourrait mettre en place un refresh token
+ */
+
 #[ORM\Entity(repositoryClass: JwtTokenRepository::class)]
 class JwtToken
 {

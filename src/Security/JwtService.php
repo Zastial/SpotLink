@@ -30,6 +30,11 @@ class JwtService
         );
     }
 
+    /**
+     * Crée un token JWT pour un utilisateur.
+     * @param User $user L'utilisateur pour lequel créer le token.
+     * @return Plain Le token JWT créé.
+     */
     public function createToken(User $user): Plain
     {
         $now = new DateTimeImmutable();
@@ -47,6 +52,11 @@ class JwtService
             ->getToken($this->config->signer(), $this->config->signingKey());
     }
 
+    /**
+     * Vérifie et parse un token JWT.
+     * @param string $token Le token JWT à vérifier.
+     * @return Plain|null Le token JWT parsé ou null si le token est invalide.
+     */
     public function parseToken(string $token): ?Plain
     {
         try {
