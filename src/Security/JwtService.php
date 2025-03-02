@@ -8,7 +8,7 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
-use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use Lcobucci\Clock\SystemClock;
 use DateTimeImmutable;
 use Exception;
@@ -57,7 +57,7 @@ class JwtService
 
             $constraints = [
                 new IssuedBy(AppConst::APP_NAME),
-                new LooseValidAt(SystemClock::fromUTC()),
+                new ValidAt(SystemClock::fromUTC()),
             ];
 
             if (!$this->config->validator()->validate($parsedToken, ...$constraints)) {

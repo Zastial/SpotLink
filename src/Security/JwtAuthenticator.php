@@ -9,10 +9,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\SelfValidatingPassport;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use App\Repository\UserRepository;
 use App\Security\JwtService;
+use Symfony\Component\Routing\RouterInterface;
+
 
 /**
  * Classe JwtAuthenticator permettant de gérer l'authentification JWT.
@@ -21,11 +23,20 @@ class JwtAuthenticator extends AbstractAuthenticator
 {
     private $jwtService;
     private $userRepository;
+    private RouterInterface $router;
 
-    public function __construct(JwtService $jwtService, UserRepository $userRepository)
+
+    /**
+     * Constructeur de la classe JwtAuthenticator.
+     * @param JwtService $jwtService Service de gestion des jetons JWT.
+     * @param UserRepository $userRepository Référence vers le dépôt des utilisateurs.
+     * @param RouterInterface $router Interface de gestion des routes.
+     */
+    public function __construct(JwtService $jwtService, UserRepository $userRepository, RouterInterface $router)
     {
         $this->jwtService = $jwtService;
         $this->userRepository = $userRepository;
+        $this->router = $router;
     }
 
     /**
@@ -38,18 +49,15 @@ class JwtAuthenticator extends AbstractAuthenticator
         if (preg_match('#^/(login|register|home)#', $request->getPathInfo())) {
             return false;
         }
-        
-        // // Only support if a JWT token exists in the cookie
-        // return $request->cookies->has('token');
+        return $request->cookies->get('Bearer') ? true : false;
 
-        $authHeader = $request->headers->get('Authorization');
-        if (!$authHeader) {
-
-            return false;  // Aucun jeton JWT dans l'en-tête Authorization
-        }
-
+        # Version header Authorization
+        // $authHeader = $request->headers->get('Authorization');
+        // if (!$authHeader) {
+        //     return false;  // Aucun jeton JWT dans l'en-tête Authorization
+        // }
         // Vérifier que le jeton commence bien par "Bearer "
-        return preg_match('/^Bearer\s/', $authHeader);
+        //return preg_match('/^Bearer\s/', $authHeader);
     }
 
     /**
@@ -60,9 +68,11 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function authenticate(Request $request): Passport
     {
-        echo "<script>console.log(' starting to authenticate');</script>";
-        $authHeader = $request->headers->get('Authorization');
-        $token = substr($authHeader, 7);
+        $token = $request->cookies->get('Bearer');  // Récupérer le cookie Bearer
+
+        # Version header Authorization
+        //$authHeader = $request->headers->get('Authorization');
+        //$token = substr($authHeader, 7);
 
         $parsedToken = $this->jwtService->parseToken($token);
 
@@ -84,6 +94,7 @@ class JwtAuthenticator extends AbstractAuthenticator
 
     /**
      * Gère les erreurs d'authentification.
+     * Cas d'un mauvais mot de passe par exemple.
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?RedirectResponse
     {
@@ -96,11 +107,10 @@ class JwtAuthenticator extends AbstractAuthenticator
         // Cas où l'utilisateur n'a pas le rôle nécessaire
         if ($exception instanceof AccessDeniedException) {
             // Rediriger vers la page de login (ou une page d'erreur)
-            return new RedirectResponse($this->generateUrl('app_login'));  // Vous pouvez aussi définir une page d'erreur spécifique ici
+            return new RedirectResponse($this->generateUrl('app_access_denied'));
         }
 
-        // Si l'exception est de type générique, renvoyer une réponse 401 (Non autorisé) avec un message d'erreur
-        return new RedirectResponse($this->generateUrl('app_login'));
+        return new RedirectResponse($this->router->generate('app_login'));
     }
 
     /**
@@ -113,9 +123,12 @@ class JwtAuthenticator extends AbstractAuthenticator
 
     /**
      * Gère le cas où l'authentification est requise.
+     * Appeler quand l'utilisateur n'est pas authentifié.
      */
     public function start(Request $request, AuthenticationException $authException = null): JsonResponse
     {
-        return new JsonResponse(['error' => 'Authentification requise.'], JsonResponse::HTTP_UNAUTHORIZED);
+        echo "<script>console.log(' Authentication failed " . $exception . "');</script>";
+
+        return new RedirectResponse($this->router->generate('app_login'));
     }
 }

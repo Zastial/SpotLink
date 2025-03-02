@@ -28,13 +28,18 @@ security:
             stateless: true
             provider: app_user_provider
             # On utilise notre authentificateur personnalisé pour récupérer le token depuis le cookie
-            custom_authenticators:
+            custom_authenticators: 
                 - App\Security\JwtAuthenticator
+
             # Gestion pour la session PHP mais nous utilisons le JWT
             # logout:
             #     path: /logout
             #     # Vous pouvez ajouter un callback pour supprimer le cookie de déconnexion
             #     invalidate_session: false
+
+            # Gestion des redirections pour les utilisateurs n'ayant pas les droits suffisants
+            access_denied_handler: App\Security\AccessDeniedHandler
+
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

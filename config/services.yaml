@@ -26,4 +26,10 @@ services:
     # Service pour l'inscription d'un utilisateur
     App\Services\Interfaces\UserRegistrationServiceInterface: '@App\Services\UserRegistrationService'
     
+    # Service pour la connexion d'un utilisateur
     App\Services\Interfaces\UserLoginServiceInterface: '@App\Services\UserLoginService'
+
+    # Service pour les acces non autorisés
+    App\Security\AccessDeniedHandler:
+        arguments:
+            $router: '@router'

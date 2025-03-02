@@ -62,7 +62,15 @@ final class LoginController extends AbstractController
                 $expiresAt = $token->claims()->get('exp');
 
                  // Créer le cookie avec l'option HttpOnly pour la sécurité
-                $cookie = Cookie::create('BEARER', $token->toString(), $expiresAt, '/', null, false, true);
+                $cookie = Cookie::create('Bearer',
+                    $token->toString(),
+                    $expiresAt,
+                    '/', // Valide sur toute l'app
+                    null, 
+                    false, // Envoyer uniquement le cookie en HTTPS
+                    false, // Autoriser le cookie que sur mon site
+                    true 
+                );
                 // Ce cookie sera envoyé avec les requêtes de l'utilisateur
 
                 // Rediriger vers la page d'accueil ou le dashboard
