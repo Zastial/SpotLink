@@ -41,6 +41,7 @@ class JwtService
             ->identifiedBy(bin2hex(random_bytes(16)), true)
             ->issuedAt($now)
             ->canOnlyBeUsedAfter($now)
+            ->withClaim('roles', $user->getRoles())
             ->expiresAt($expiresAt)
             ->withClaim('uid', $user->getId())
             ->getToken($this->config->signer(), $this->config->signingKey());

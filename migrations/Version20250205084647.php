@@ -31,7 +31,7 @@ final class Version20250205084647 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_4999124E71F7E88B ON event_status (event_id)');
         $this->addSql('CREATE INDEX IDX_4999124E6BF700BD ON event_status (status_id)');
         $this->addSql('COMMENT ON COLUMN event_status.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE role (id SERIAL NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE role (id SERIAL NOT NULL, roleValue VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE status (id SERIAL NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE "user" (id SERIAL NOT NULL, role_id INT NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_verify BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_8D93D649D60322AC ON "user" (role_id)');

@@ -38,8 +38,16 @@ class JwtAuthenticator extends AbstractAuthenticator
             return false;
         }
         
-        // Only support if a JWT token exists in the cookie
-        return $request->cookies->has('token');
+        // // Only support if a JWT token exists in the cookie
+        // return $request->cookies->has('token');
+
+        $authHeader = $request->headers->get('Authorization');
+        if (!$authHeader) {
+            return false;  // Aucun jeton JWT dans l'en-tête Authorization
+        }
+
+        // Vérifier que le jeton commence bien par "Bearer "
+        return preg_match('/^Bearer\s/', $authHeader);
     }
 
     /**

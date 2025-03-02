@@ -5,30 +5,32 @@ namespace App\Services;
 use App\Entity\User;
 use App\Services\Interfaces\UserLoginServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserLoginService implements UserLoginServiceInterface
 {
 
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
+    private UserPasswordHasherInterface  $passwordHasher;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, 
+                                UserPasswordHasherInterface  $passwordHasher)
     {
-
         $this->entityManager = $entityManager;
+        $this->passwordHasher = $passwordHasher;
     }
 
-    public function login(User $user, String $password): bool
+    public function authenticateUser(string $email, string $password): ?User
     {
-       try {
-            
-            //TODO  
+        // Chercher l'utilisateur par son email
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
-
-            return true;
-        } catch (\Exception $e) {
-            // Gérer les erreurs ici si besoin
-            return false;
+        // Si l'utilisateur n'existe pas ou si le mot de passe est incorrect
+        if (!$user || !$this->passwordHasher->isPasswordValid($user, $password)) {
+            return null;  // L'utilisateur ou mot de passe est incorrect
         }
+
+        return $user;  // Retourner l'utilisateur s'il est authentifié
     }
+
 }

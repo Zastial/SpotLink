@@ -43,7 +43,7 @@ class User implements PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column]
     private bool $is_verify = false;
@@ -74,6 +74,8 @@ class User implements PasswordAuthenticatedUserInterface
         $this->events = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->jwtTokens = new ArrayCollection();
+        $this->created_at = new \DateTimeImmutable();
+        $this->is_verify = false;
     }
 
     public function getId(): ?int

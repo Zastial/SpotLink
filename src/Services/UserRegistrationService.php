@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Entity\User;
@@ -6,10 +7,11 @@ use App\Services\Interfaces\UserRegistrationServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Utils\CustomResponse;
+use App\Entity\Role;
+use App\Enum\Role as RoleEnum;
 
 class UserRegistrationService implements UserRegistrationServiceInterface
 {
-
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordHasher;
 
@@ -19,27 +21,35 @@ class UserRegistrationService implements UserRegistrationServiceInterface
         $this->passwordHasher = $passwordHasher;
     }
 
-
     public function register(User $user, String $password): CustomResponse
     {
         try {
-            //TODO : à faire une fois les pages faites et au moment de l'utilisation du JWT
-
             // Encoder le mot de passe de l'utilisateur
-            // Hash du mot de passe avant de l'enregistrer en base
             $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
             $user->setPassword($hashedPassword);
-            $user->setCreatedAt(new \DateTimeImmutable());
-            $user->setIsVerify(false);
+
+            // Obtenir le repository pour Role
+            $roleRepository = $this->entityManager->getRepository(Role::class);
+    
+            // Chercher l'entité Role correspondant à l'énumération USER
+            $roleUser = $roleRepository->findOneBy(['roleValue' => RoleEnum::USER->value]);
+
+            if ($roleUser) {
+                // Affecter le rôle à l'utilisateur
+                $user->setRole($roleUser);
+            }
+
+           
 
             // Enregistrer l'utilisateur dans la base de données
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            // Retourner vrai si tout s'est bien passé
-            return new CustomResponse(true,);
+            // Retourner une réponse réussie
+            return new CustomResponse(true, 'Utilisateur enregistré avec succès.');
+
         } catch (\Exception $e) {
-            // Gérer les erreurs ici si besoin
+            // En cas d'erreur, retourner une réponse d'échec avec le message d'erreur
             return new CustomResponse(false, null, $e->getMessage());
         }
     }

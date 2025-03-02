@@ -37,7 +37,14 @@ final class RegistrationController extends AbstractController
             $form->handleRequest($request);
     
             if ($form->isSubmitted() && $form->isValid()) {
+                
                 $password = $form->get('password')->getData();
+                $confirmPassword = $form->get('confirmPassword')->getData();
+
+                if ($password !== $confirmPassword) {
+                    $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                    return $this->redirectToRoute('register');
+                }
     
                 // Sauvegarde de l'utilisateur en base de données
                 $response = $this->registrationService->register($user, $password);
