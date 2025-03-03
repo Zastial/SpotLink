@@ -14,6 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use App\Repository\UserRepository;
 use App\Security\JwtService;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 /**
@@ -82,7 +83,6 @@ class JwtAuthenticator extends AbstractAuthenticator
         if (!$parsedToken) {
             throw new AuthenticationException('Token JWT invalide ou expiré.');
         }
-        echo "<script>console.log(' Token exists ');</script>";
 
         $userId = $parsedToken->claims()->get('uid');
         $user = $this->userRepository->find($userId);
@@ -125,7 +125,7 @@ class JwtAuthenticator extends AbstractAuthenticator
      * Gère le cas où l'authentification est requise.
      * Appeler quand l'utilisateur n'est pas authentifié.
      */
-    public function start(Request $request, AuthenticationException $authException = null): JsonResponse
+    public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
     {
         // Quand le token est absent ou invalide
         return new RedirectResponse($this->router->generate('app_login'));

@@ -109,8 +109,6 @@ final class HomePageController extends AbstractController
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
         $icons = $this->getIcons($eventCategoryService, $eventCategoryMap);
 
-        echo "<script>console.log(" . json_encode($eventForJS) . ");</script>";
-
         return $this->render('event/detail.html.twig', [
             'event' => $event,
             'eventForJS' => $eventForJS,
