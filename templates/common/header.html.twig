@@ -7,8 +7,9 @@
             </a>
         </div>
         <nav class="hidden md:flex gap-6 items-center pr-4">
-            <a href="/" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
-            <a href="/my-events" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
+            <a href="/" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a>
+            <a href="/my-events" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a>
+            <a href="/event/submit" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Soumettre un évènement</a>
         </nav>
         
         <div class="md:hidden px-4 py-2">
@@ -51,6 +52,7 @@
         <a href="/my-events" data-turbo="falsehome" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
         <a href="/user_informations" data-turbo="false" class="text-lg text-gray-800 hover:underline">Mon compte</a>
         <a href="/admin/events" data-turbo="false" class="text-lg text-green hover:underline">Administration</a>
+        <a href="/event/submit" data-turbo="falsehome" class="text-lg text-gray-800 hover:underline">Soumettre un évènement</a>
         <a href="/home" data-turbo="false" class="text-lg text-red hover:underline">Se déconnecter</a>
     </nav>
 </div>
