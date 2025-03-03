@@ -11,8 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\CategoryRepository;
-use App\Service\EventCategoryService;
-use App\Service\EventService;
+use App\Services\EventCategoryService;
+use App\Services\EventService;
 use Symfony\Component\HttpFoundation\Request;
 
 final class UserEventsController extends AbstractController
