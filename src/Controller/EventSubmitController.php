@@ -46,10 +46,10 @@ final class EventSubmitController extends AbstractController
         $form = $this->createForm(EventFormType::class, $event);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            
             $this->entityManager->beginTransaction();
             try {
-                //ToDo: à remplacer par le user connecté
                 $userDto = $getUserInformationService->getUserInformation($request);
 
                 if (!$id) {
