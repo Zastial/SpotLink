@@ -62,7 +62,7 @@ final class EventSubmitController extends AbstractController
 
                     $message = "créé";
                 } else {
-                    if ($event->getCreator() != $userDto->id) {
+                    if ($event->getCreator()->getId() != $userDto->id) {
                         throw new \Exception("Vous n'êtes pas autorisé à modifier cet événement", 401);
                     }
                     $eventStatus->setComment("");
