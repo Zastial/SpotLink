@@ -11,17 +11,39 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\UserRepository;
 use App\Entity\User;
-use function PHPUnit\Framework\throwException;
+use App\Services\GetUserInformationService;
+use App\Mapper\UserMapper;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class UserInformationsController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+    private GetUserInformationService $getUserInformationService;
+    private UserMapper $userMapper;
+
+    public function __construct(EntityManagerInterface $entityManager, GetUserInformationService $getUserInformationService, UserMapper $userMapper)
+    {
+        $this->entityManager = $entityManager;
+        $this->getUserInformationService = $getUserInformationService;
+        $this->userMapper = $userMapper;
+    }
+
+
     //Affichage de la vue user_informations
     #[Route('/user_informations', name: 'user_informations')]
-    public function user_informations(Request $request, UserRepository $userRepository): Response
+    public function user_informations(Request $request): Response
     {
-        #TODO : Remplacer par user connected
-        $user = $userRepository->findOneBy([], ['id' => 'ASC']);
-        $userform = $this->createForm(UserInformationsFormType::class, $user);
+        
+        $userDto = $this->getUserInformationService->getUserInformation($request);
+
+        if ($userDto === null) {
+            #TODO : Remplacer par une notif utilisateur
+            throw new \Exception("L'utilisateur est introuvable");
+        }
+
+        $user = $this->entityManager->getRepository(User::class)->find($userDto->id);
+
+        $userform = $this->createForm(UserInformationsFormType::class, $userDto);
 
         $userform->handleRequest($request);
         if ($userform->isSubmitted() && $userform->isValid()) {
@@ -29,7 +51,11 @@ final class UserInformationsController extends AbstractController
                 if (!$user){
                     throw new \Exception('Un problème est survenu lors de l\'opération.');
                 }
-                $userRepository->save($user);
+           
+                $userToUpdate = $this->userMapper->mapDtoToEntity($userDto, $user);
+                
+                $this->entityManager->persist($userToUpdate);
+                $this->entityManager->flush();
                 $this->addFlash('success', "Vos informations ont été mises à jour !");
 
             }catch(\Exception $e){

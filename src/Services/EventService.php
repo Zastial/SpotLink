@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Service de gestion des événements.
+ */
 class EventService
 {
     private EntityManagerInterface $entityManager;
@@ -17,12 +20,19 @@ class EventService
         $this->eventRepository = $eventRepository;
     }
 
+    /**
+     * Enregistrer un nouvel événement.
+     * @param Event $event L'événement à enregistrer.
+     */
     public function save(Event $event): void
     {
         $this->entityManager->persist($event);
         $this->entityManager->flush();
     }
 
+    /**
+     * Récupération de l'événement à partir d'une date.
+     */
     public function getEventsByDate(\DateTime $date)
     {
         return $this->eventRepository->findEventsByDate($date);

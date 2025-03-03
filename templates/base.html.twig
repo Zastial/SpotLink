@@ -31,6 +31,7 @@
         {% include 'common/notification.html.twig' %}
         {% include 'common/header.html.twig' %}
         <main class="flex-1">
+            {% include 'common/flash/flash_message.html.twig' %}
             {% block body %}
             {% endblock %}
         </main>
