@@ -41,8 +41,6 @@ final class EventSubmitController extends AbstractController
         // Récupération de l'événement et de son statut s'ils existent
         $event = $id ? $eventRepository->find($id) : new Event();
         $eventStatus = $id ? $eventStatusRepository->findOneBy(['event' => $event]) : new EventStatus();
-        dump($event);
-        dump($eventStatus);
         $form = $this->createForm(EventFormType::class, $event);
         $form->handleRequest($request);
 
