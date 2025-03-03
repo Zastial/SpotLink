@@ -1,0 +1,200 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block body %}
+<div class="container mx-auto py-8 px-4">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        {# Event Header #}
+        <div class="bg-primary text-white p-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold">{{ event.name }}</h1>
+                <span class="px-2 py-2 rounded-full border bg-white" style="border-color: {{ markerColors[event.id] | default('#FFC0CB') }}; color: {{ markerColors[event.id] | default('#000') }};">
+                    <i class="{{ icons[event.id] }}"></i>
+                    <span>{{event.category.name}}</span>
+                </span>
+            </div>
+        </div>
+        
+        {# Event Details #}
+        <div class="p-6">
+            {# Date and Time #}
+            <div class="mb-6">
+                <h2 class="font-bold text-lg text-primary mb-2">Date et heure</h2>
+                <p>Créé le: {{ event.createdAt|date('d/m/Y à H:i') }}</p>
+                {% if event.dateStart %}
+                    <p>Début: {{ event.dateStart|date('d/m/Y à H:i') }}</p>
+                {% endif %}
+                {% if event.dateEnd %}
+                    <p>Fin: {{ event.dateEnd|date('d/m/Y à H:i') }}</p>
+                {% endif %}
+            </div>
+            
+            {# Location #}
+            <div class="mb-6">
+                <h2 class="font-bold text-lg text-primary mb-2">Lieu</h2>
+                {% if event.locationName %}
+                    <p class="font-bold">{{ event.locationName }}</p>
+                {% endif %}
+                
+                <address>
+                    {% if event.houseNumber %}{{ event.houseNumber }} {% endif %}
+                    {% if event.road %}{{ event.road }}<br>{% endif %}
+                    {% if event.postcode %}{{ event.postcode }} {% endif %}
+                    {% if event.city %}{{ event.city }}<br>{% endif %}
+                    {% if event.county %}{{ event.county }}{% endif %}
+                    {% if event.state %}{% if event.county %}, {% endif %}{{ event.state }}{% endif %}
+                    {% if event.country %}{% if event.county or event.state %}, {% endif %}{{ event.country }}{% endif %}
+                </address>
+            </div>
+            
+            {# Description #}
+            <div class="mb-6">
+                <h2 class="font-bold text-lg text-primary mb-2">Description</h2>
+                <p>{{ event.description|nl2br }}</p>
+            </div>
+            
+            {# Organizer #}
+            <div class="mb-6">
+                <h2 class="font-bold text-lg text-primary mb-2">Organisateur</h2>
+                <p>
+                    {% if event.creator.username is defined and event.creator.username %}
+                        {{ event.creator.username }}
+                    {% else %}
+                        {{ event.creator.firstName }} {{ event.creator.lastName }}
+                    {% endif %}
+                </p>
+            </div>
+            
+            {# Map #}
+            {% if event.latitude and event.longitude %}
+            <div class="mb-6">
+                <h2 class="font-bold text-lg text-primary mb-2">Carte</h2>
+                <div id="map" class="h-[300px] rounded-lg border"></div>
+                
+                <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+                <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {     
+                        var event = {{ eventForJS|json_encode|raw }};
+                   
+                        var map = L.map('map').setView([event.latitude, event.longitude], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                            maxZoom: 19
+                        }).addTo(map);
+
+                        // Data passed from Symfony controller
+                        var markerColors = {{ markerColors|json_encode|raw }}; // Colors for different event categories
+                        var icons = {{ icons|json_encode|raw }}; // Icons for different event categories
+
+                        if (event.latitude && event.longitude) {
+                            // Create marker & use marker color based on category (DB stored)
+                            var color = markerColors[event.id] || "#FFC0CB";
+                            var customIcon = L.divIcon({
+                                className: "custom-marker",
+                                html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+                                iconSize: [20, 20],
+                                iconAnchor: [10, 10],
+                                popupAnchor: [0, -10]
+                            });
+
+                            // Create marker with popup content
+                            var marker = L.marker([event.latitude, event.longitude], { icon: customIcon })
+                                .addTo(map)
+                                .bindPopup(`
+                                    <div class="popup-content">
+                                        <h3 class="font-bold event-text">${event.name}</h3>
+                                        <div class="flex items-center space-x-2 mt-2">
+                                            <span class="px-1 py-1 rounded-full border" style="border-color: ${markerColors[event.id] || '#FFC0CB'}; color: ${markerColors[event.id] || '#000'};">
+                                                <i class="${icons[event.id]}"></i>
+                                                <span>${event.category_name}</span>
+                                            </span>
+                                        </div>
+                                        <p class="text-sm">
+                                            ${event.description.length > 100 ? event.description.substring(0, 100) + '...' : event.description}
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            Date de l'événement : ${new Date(event.created_at).toLocaleDateString()}
+                                        </p> 
+                                        <div class="flex justify-between items-center mt-2">
+                                            <a data-turbo="false" href="/event/${event.id}" class="text-primary hover:underline">
+                                                Voir les détails
+                                            </a>
+                                            <i class="far fa-star favorite-star cursor-pointer" data-event-id="${event.id}" style="font-size: 1.5em; color: orange;"></i>
+                                        </div>
+                                    </div>
+                                `);
+                            
+                            // Handle popup opening to manage favorite star functionality
+                            marker.on('popupopen', function(e) {
+                                const popup = e.popup;
+                                const popupContent = popup.getElement();
+                                const star = popupContent.querySelector('.favorite-star');
+                                
+                                if (star) {
+                                    // Remove any existing event listeners to prevent duplicates
+                                    star.replaceWith(star.cloneNode(true));
+                                    const newStar = popupContent.querySelector('.favorite-star');
+                                    
+                                    // WAITING FOR USER TO BE IMPLEMENTED
+                                    // FOR NOW, STORE IN LOCAL STORAGE
+                                    const isFavorite = localStorage.getItem(`favorite-event-${event.id}`) === 'true';
+                                    
+                                    newStar.className = isFavorite 
+                                        ? 'fas fa-star favorite-star cursor-pointer' // Solid star
+                                        : 'far fa-star favorite-star cursor-pointer'; // Outline star
+                                    
+                                    newStar.addEventListener('click', function(e) {
+                                        e.stopPropagation(); // Prevent popup from closing when star is clicked
+                                        
+                                        const isFavoriteNow = this.classList.contains('fas');
+                                        
+                                        if (isFavoriteNow) {
+                                            this.classList.remove('fas');
+                                            this.classList.add('far');
+                                            localStorage.setItem(`favorite-event-${event.id}`, 'false');
+                                        } else {
+                                            this.classList.remove('far');
+                                            this.classList.add('fas');
+                                            localStorage.setItem(`favorite-event-${event.id}`, 'true');
+                                        }
+                                    });
+                                }
+                            });
+                            markers[event.id] = marker;
+
+                            // Handle popup close
+                            marker.on('popupclose', function() {
+                                if (!isUserAction) {
+                                    updateSelection(null);
+                                }
+                            });
+
+                            // Handle marker click to focus map
+                            marker.on('click', function() {
+                                map.flyTo(marker.getLatLng(), 13, {
+                                    duration: 1.5,
+                                    easeLinearity: 0.25
+                                });
+                                marker.openPopup();
+                                
+                                const listItem = document.querySelector(`li[data-event-id="${event.id}"]`);
+                                if (listItem) {
+                                    updateSelection(listItem);
+                                    // Scroll list to show selected item
+                                    listItem.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'center'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
