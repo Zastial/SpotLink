@@ -6,7 +6,6 @@ use App\Repository\RoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Enum\Role as RoleEnum;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 class Role
@@ -17,7 +16,7 @@ class Role
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private string $roleValue;
+    private ?string $name = null;
 
     /**
      * @var Collection<int, User>
@@ -25,9 +24,8 @@ class Role
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'role')]
     private Collection $users;
 
-     public function __construct(RoleEnum $roleEnum)
+    public function __construct()
     {
-        $this->roleValue = $roleEnum->value;
         $this->users = new ArrayCollection();
     }
 
@@ -36,14 +34,14 @@ class Role
         return $this->id;
     }
 
-    public function getRole(): ?string
+    public function getName(): ?string
     {
-        return $this->roleValue;
+        return $this->name;
     }
 
-    public function setRole(string $roleValue): static
+    public function setName(string $name): static
     {
-        $this->roleValue = $roleValue;
+        $this->name = $name;
 
         return $this;
     }

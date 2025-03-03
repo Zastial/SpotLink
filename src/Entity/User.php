@@ -8,10 +8,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User implements PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,35 +24,27 @@ class User implements PasswordAuthenticatedUserInterface
     private ?Role $role = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
-    #[Assert\Length(min: 2, minMessage: "Le prénom doit contenir au moins {{ limit }} caractères.")]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
-    #[Assert\Length(min: 2, minMessage: "Le nom doit contenir au moins {{ limit }} caractères.")]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "L'email est obligatoire.")]
-    #[Assert\Email(message: "L'email doit être valide (exemple : yahoo@monemail.com")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
-    #[Assert\Length(min: 6, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.")]
     private ?string $password = null;
 
     #[ORM\Column]
-    private \DateTimeImmutable $created_at;
+    private ?\DateTimeImmutable $created_at = null;
 
     #[ORM\Column]
-    private bool $is_verify = false;
+    private ?bool $is_verify = null;
 
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator')]
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', cascade: ['persist', 'remove'])]
     private Collection $events;
 
     /**
@@ -62,7 +55,7 @@ class User implements PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $username = null;
-
+    
     /**
      * @var Collection<int, JwtToken>
      */
@@ -232,7 +225,7 @@ class User implements PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
+    
     /**
      * @return Collection<int, JwtToken>
      */
@@ -261,5 +254,25 @@ class User implements PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roleName = $this->role ? $this->role->getName() : 'USER';
+        return ['ROLE_' . strtoupper($roleName)];
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials() : void
+    {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 }

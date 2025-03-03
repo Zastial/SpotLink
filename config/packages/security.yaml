@@ -40,7 +40,7 @@ security:
             #     invalidate_session: false
 
             # Gestion des redirections pour les utilisateurs n'ayant pas les droits suffisants
-            #access_denied_handler: App\Security\AccessDeniedHandler
+            access_denied_handler: App\Security\AccessDeniedHandler
 
 
     # Easy way to control access for large sections of your site
@@ -54,7 +54,7 @@ security:
         - { path: ^/profile, roles: ROLE_USER }
         
         # Le reste des pages nécessite d'être connecté (par exemple ROLE_USER)
-        - { path: ^/, roles: USER }
+        - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:
