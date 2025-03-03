@@ -13,7 +13,7 @@ use Lcobucci\Clock\SystemClock;
 use DateTimeImmutable;
 use Exception;
 use App\Entity\User;
-use App\Const\AppConst;
+use src\App\Const\AppConst;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
