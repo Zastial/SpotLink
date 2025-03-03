@@ -19,6 +19,7 @@ use App\Repository\UserRepository;
 use App\Repository\StatusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Enum\StatusEnum;
+use App\Services\GetUserInformationService;
 
 final class EventSubmitController extends AbstractController
 {
@@ -33,7 +34,7 @@ final class EventSubmitController extends AbstractController
     }
 
     #[Route('/event/submit/{id?}', name: 'event_submit')]
-    public function new_event(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
+    public function new_event(Request $request,GetUserInformationService $getUserInformationService, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
     {
         $event = new Event();
         $eventStatus = new EventStatus();
@@ -49,9 +50,10 @@ final class EventSubmitController extends AbstractController
             $this->entityManager->beginTransaction();
             try {
                 //ToDo: à remplacer par le user connecté
-                $user = $userRepository->findOneBy([], ['id' => 'ASC']);
+                $userDto = $getUserInformationService->getUserInformation($request);
 
                 if (!$id) {
+                    $user = $userRepository->find($userDto->id);
                     $event->setCreator($user);
                     $event->setCreatedAt(new \DateTimeImmutable());
 
@@ -60,7 +62,7 @@ final class EventSubmitController extends AbstractController
 
                     $message = "créé";
                 } else {
-                    if ($event->getCreator() != $user) {
+                    if ($event->getCreator() != $userDto->id) {
                         throw new \Exception("Vous n'êtes pas autorisé à modifier cet événement", 401);
                     }
                     $eventStatus->setComment("");
