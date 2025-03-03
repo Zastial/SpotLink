@@ -24,7 +24,6 @@ final class Version20250302091908 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_F53B9F21B03A8386 ON jwt_token (created_by_id)');
         $this->addSql('COMMENT ON COLUMN jwt_token.expires_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE jwt_token ADD CONSTRAINT FK_F53B9F21B03A8386 FOREIGN KEY (created_by_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE role RENAME COLUMN name TO role_value');
     }
 
     public function down(Schema $schema): void
@@ -33,6 +32,5 @@ final class Version20250302091908 extends AbstractMigration
         $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE jwt_token DROP CONSTRAINT FK_F53B9F21B03A8386');
         $this->addSql('DROP TABLE jwt_token');
-        $this->addSql('ALTER TABLE role RENAME COLUMN role_value TO name');
     }
 }
