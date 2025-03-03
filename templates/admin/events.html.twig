@@ -18,7 +18,7 @@
                 <option value=5 {% if status == 5 %} selected {% endif %}>Refus Partiel</option>
 			</select>
 
-			<button type="submit" class="bg-primary text-white px-4 py-2 rounded">Filtrer</button>
+			<button type="submit" class="bg-primary text-white px-4 py-2 rounded-full">Filtrer</button>
 		</form>
 
 		<table class="min-w-[90%] border border-gray shadow-lg rounded-lg pt-5">
@@ -53,8 +53,8 @@
 						{# <a href="{{ path('admin_event_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
 						                <a href="{{ path('admin_event_delete', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</a> #}
 						{% if event.eventStatus.status.id == 2 %}
-						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
-						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Refuser</a>
+						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green hover:bg-green-dark text-white font-bold py-2 px-4 rounded-full">Valider</a>
+						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red hover:bg-red-dark text-white font-bold py-2 px-4 rounded-full">Refuser</a>
 						{% endif %}
 					</td>
 				</tr>

@@ -13,6 +13,7 @@ module.exports = {
         'red': '#c41a1a',
         'red-dark': '#a71717',
         'green': '#33b020',
+        'green-dark': '#278519',
       },
       fontFamily: {
         lexend: ['"Lexend Deca"', 'sans-serif'],

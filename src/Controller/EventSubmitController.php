@@ -55,7 +55,7 @@ final class EventSubmitController extends AbstractController
                 $eventStatus->setCreatedAt(new \DateTimeImmutable());
 
                 // Assigner le statut "CREATED"
-                $status = $statusRepository->find(StatusEnum::CREATED);
+                $status = $statusRepository->find(StatusEnum::AWAITING_VALIDATION);
                 $eventStatus->setStatus($status);
                 $eventStatusRepository->save($eventStatus);
 
