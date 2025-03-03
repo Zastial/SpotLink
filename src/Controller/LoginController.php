@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Security\JwtService;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 final class LoginController extends AbstractController
 {
@@ -54,7 +55,6 @@ final class LoginController extends AbstractController
                 }
 
 
-
                 // Générer le token JWT pour l'utilisateur
                 $token = $this->jwtService->createToken($user);
 
@@ -71,6 +71,7 @@ final class LoginController extends AbstractController
                     false, // Peut être défini à 'None' pour autoriser le cookie sur des sites tiers
                     true  // Singature
                 );
+                
 
                 // Rediriger vers la page d'accueil
                 $response = $this->redirectToRoute('app_home_page');
@@ -96,13 +97,15 @@ final class LoginController extends AbstractController
     }
 
 
-    #[Route('/logout', name: 'app_logout', methods: ['POST'])]
+    #[Route('/logout', name: 'app_logout')]
     public function logout(): Response
     {
-        // Symfony gère automatiquement la déconnexion
-        // On peut rediriger ou simplement retourner une réponse
-        
-        // TODO invalider token ?
-        return $this->json(['message' => 'Déconnexion réussie.']);
+        $response = new RedirectResponse('/home');
+
+        // Supprimer le cookie "Bearer" en le définissant dans le passé
+        $cookie = new Cookie('Bearer', '', time() - 3600);
+        $response->headers->setCookie($cookie);
+
+        return $response;
     }
 }

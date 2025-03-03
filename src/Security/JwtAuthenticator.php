@@ -46,11 +46,14 @@ class JwtAuthenticator extends AbstractAuthenticator
     {
 
         // Pas besoin d'authentification pour ces routes
-        if (preg_match('#^/(login|register|home|access_denied)#', $request->getPathInfo())) {
+        if (preg_match('#^/(login|register|home|logout|access_denied)#', $request->getPathInfo())) {
             return false;
         }
-        return $request->cookies->get('Bearer') ? true : false;
 
+        $token = $this->jwtService->getJwtToken();
+
+        return $token !== null;
+        
         # Version header Authorization
         // $authHeader = $request->headers->get('Authorization');
         // if (!$authHeader) {

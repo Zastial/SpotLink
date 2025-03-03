@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Enum\Role as RoleEnum;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -258,8 +259,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getRoles(): array
     {
-        $roleName = $this->role ? $this->role->getName() : 'USER';
-        return ['ROLE_' . strtoupper($roleName)];
+        $roleName = $this->role ? $this->role->getName() : RoleEnum::USER;
+        return ['ROLE_' . $roleName];
     }
 
     public function getSalt(): ?string

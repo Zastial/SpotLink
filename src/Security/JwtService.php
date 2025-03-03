@@ -14,6 +14,7 @@ use DateTimeImmutable;
 use Exception;
 use App\Entity\User;
 use App\Const\AppConst;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Classe JwtService permettant de gérer la création et validationdes tokens JWT.
@@ -29,6 +30,24 @@ class JwtService
             InMemory::plainText($_ENV['JWT_SECRET_KEY'])
         );
     }
+
+
+    /**
+     * Récupère le Jwt via le cookie
+     */
+    public function getJwtToken() : ?string {
+        $token = $request->cookies->get('Bearer');
+        return empty($token) ? null : $token;
+    }
+
+    /**
+     * Récupère le Jwt via le cookie
+     */
+    public function getJwtTokenFromRequest(Request $request) : ?string {
+        $token = $request->cookies->get('Bearer');
+        return empty($token) ? null : $token;
+    }
+
 
     /**
      * Crée un token JWT pour un utilisateur.
