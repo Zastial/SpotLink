@@ -17,36 +17,20 @@ use Psr\Log\LoggerInterface;
  */
 class AccessDeniedHandler implements AccessDeniedHandlerInterface
 {
-    private Environment $twig;
     private RouterInterface $router;
-    private LoggerInterface $logger;
 
-    public function __construct(Environment $twig, RouterInterface $router, LoggerInterface $logger)
+    public function __construct(RouterInterface $router)
     {
-        $this->twig = $twig;
         $this->router = $router;
-        $this->logger = $logger;
+
     }
 
+    /**
+     * Gère les erreurs d'accès refusé et redirige vers une page.
+     */
     public function handle(Request $request, AccessDeniedException $accessDeniedException): ?Response
     {
-        try {
-            $this->logger->error('Access Denied: ' . $accessDeniedException->getMessage());
-
-            $content = $this->twig->render('error/access_denied.html.twig', [
-                'message' => $accessDeniedException->getMessage(),
-                'exception' => $accessDeniedException
-            ]);
-
-            return new Response($content, Response::HTTP_FORBIDDEN);
-        } catch (\Exception $e) {
-            $this->logger->error('Twig rendering failed: ' . $e->getMessage());
-
-            return new Response(
-                "<h1>Erreur</h1><p>Une erreur est survenue en générant la page d\'accès refusé. " . $e ."</p>",
-                Response::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
+        return new RedirectResponse($this->router->generate('app_access_denied'));
     }
 
 }

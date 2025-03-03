@@ -46,7 +46,7 @@ class JwtAuthenticator extends AbstractAuthenticator
     {
 
         // Pas besoin d'authentification pour ces routes
-        if (preg_match('#^/(login|register|home)#', $request->getPathInfo())) {
+        if (preg_match('#^/(login|register|home|access_denied)#', $request->getPathInfo())) {
             return false;
         }
         return $request->cookies->get('Bearer') ? true : false;
@@ -76,8 +76,6 @@ class JwtAuthenticator extends AbstractAuthenticator
 
         $parsedToken = $this->jwtService->parseToken($token);
 
-        echo "<script>console.log(' Parse token " . $parsedToken->toString() . "');</script>";
-
         if (!$parsedToken) {
             throw new AuthenticationException('Token JWT invalide ou expiré.');
         }
@@ -90,9 +88,6 @@ class JwtAuthenticator extends AbstractAuthenticator
             throw new AuthenticationException('Utilisateur non trouvé.');
         }
 
-        echo "<script>console.log(' USer found ');</script>";
-
-
         return new SelfValidatingPassport(new UserBadge($userId, function () use ($user) {
             return $user;
         }));
@@ -104,22 +99,19 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?JsonResponse
     {
-        // echo "<script>console.log(' Authentication failed " . $exception . "');</script>";
-        // // Cas où l'utilisateur n'a pas de token JWT
-        // if ($exception instanceof AuthenticationCredentialsNotFoundException) {
-        //     // Rediriger vers la page de login si le token n'est pas présent
-        //     return new RedirectResponse($this->router->generate('app_login'));
-        // }
 
-        // // Cas où l'utilisateur n'a pas le rôle nécessaire
-        // if ($exception instanceof AccessDeniedException) {
-        //     // Rediriger vers la page de login (ou une page d'erreur)
-        //     return new RedirectResponse($this->router->generate('app_access_denied'));
-        // }
+        if ($exception instanceof AuthenticationCredentialsNotFoundException) {
+            // Rediriger vers la page de login si le token n'est pas présent
+            return new RedirectResponse($this->router->generate('app_login'));
+        }
 
-        // return new RedirectResponse($this->router->generate('app_login'));
+        if ($exception instanceof AccessDeniedException) {
+            // Rediriger vers la page d'erreur d'accès
+            return new RedirectResponse($this->router->generate('app_access_denied'));
+        }
 
-        return new JsonResponse(['error' => $exception->getMessage()], JsonResponse::HTTP_UNAUTHORIZED);
+        return new RedirectResponse($this->router->generate('app_login'));
+
 
     }
 
@@ -137,9 +129,7 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function start(Request $request, AuthenticationException $authException = null): JsonResponse
     {
-        return new JsonResponse(['error' => 'Authentification requise.'], JsonResponse::HTTP_UNAUTHORIZED);
-
-        // echo "<script>console.log(' ---------- Authentication START ----------------');</script>";
-        // return new RedirectResponse($this->router->generate('app_login'));
+        // Quand le token est absent ou invalide
+        return new RedirectResponse($this->router->generate('app_login'));
     }
 }

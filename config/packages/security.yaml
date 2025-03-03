@@ -21,7 +21,7 @@ security:
             security: false
 
         public:
-            pattern: ^/(login|home|register|access-denied)
+            pattern: ^/(login|home|register|access_denied)
             stateless: true
             security: false
 
@@ -47,13 +47,11 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Les pages de login home et inscription sont accessibles anonymement
-        - { path: ^/(login|register|home), roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/access-denied, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(login|register|home|), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/access_denied, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
-        
-        # Le reste des pages nécessite d'être connecté (par exemple ROLE_USER)
         - { path: ^/, roles: ROLE_USER }
 
 when@test:
