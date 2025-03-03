@@ -17,6 +17,10 @@ class UserRegisterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('username', TextType::class, [
+                'label' => 'Nom d\'utilisateur',
+                'attr' => ['placeholder' => 'Nom d\'utilisateur'],
+            ])
             ->add('first_name', TextType::class, [
                 'label' => 'Prénom',
                 'attr' => ['placeholder' => 'Prénom'],

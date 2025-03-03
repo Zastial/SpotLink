@@ -32,13 +32,7 @@ class JwtService
     }
 
 
-    /**
-     * Récupère le Jwt via le cookie
-     */
-    public function getJwtToken() : ?string {
-        $token = $request->cookies->get('Bearer');
-        return empty($token) ? null : $token;
-    }
+
 
     /**
      * Récupère le Jwt via le cookie

@@ -50,7 +50,7 @@ class JwtAuthenticator extends AbstractAuthenticator
             return false;
         }
 
-        $token = $this->jwtService->getJwtToken();
+        $token = $this->jwtService->getJwtTokenFromRequest($request);
 
         return $token !== null;
         
@@ -100,13 +100,8 @@ class JwtAuthenticator extends AbstractAuthenticator
      * Gère les erreurs d'authentification.
      * Cas d'un mauvais mot de passe par exemple.
      */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?JsonResponse
-    {
-
-        if ($exception instanceof AuthenticationCredentialsNotFoundException) {
-            // Rediriger vers la page de login si le token n'est pas présent
-            return new RedirectResponse($this->router->generate('app_login'));
-        }
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?RedirectResponse
+    {   
 
         if ($exception instanceof AccessDeniedException) {
             // Rediriger vers la page d'erreur d'accès

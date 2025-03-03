@@ -11,6 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Utils\CustomResponse;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 final class RegistrationController extends AbstractController
 {
@@ -41,8 +45,8 @@ final class RegistrationController extends AbstractController
                 $password = $form->get('password')->getData();
                 $confirmPassword = $form->get('confirmPassword')->getData();
 
-                if ($password !== $confirmPassword) {
-                    $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                if ($this->passwordAreIncorrect($password, $confirmPassword, $form)) {
+                    $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
                     return $this->redirectToRoute('register');
                 }
     
@@ -69,4 +73,32 @@ final class RegistrationController extends AbstractController
         }
     }
     
+
+    /**
+     * Valide les mots de passe du formulaire d'inscription.
+     * @param string $password Le mot de passe à valider.
+     * @param string $confirmPassword Le mot de passe de confirmation.
+     * @param FormInterface $form Le formulaire d'inscription.
+     * @return bool Vrai si les mots de passe sont valides, faux sinon.
+     */
+    private function passwordAreIncorrect(string $password, string $confirmPassword, Form $form): bool {
+
+        // Valider le mot de passe
+        $violations = $this->validator->validate($password, [
+            new Assert\Length(['min' => 6, 'minMessage' => 'Le mot de passe doit contenir au moins 6 caractères.']),
+            new Assert\NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
+        ]);
+
+        // Si des violations existent, les ajouter à l'objet du formulaire
+        foreach ($violations as $violation) {
+            $form->get('password')->addError(new FormError($violation->getMessage()));
+        }
+
+        // Si les mots de passe ne correspondent pas
+        if ($password !== $confirmPassword) {
+            $form->get('confirmPassword')->addError(new FormError('Les mots de passe ne correspondent pas.'));
+        }
+
+        return count($violations) > 0 && $password !== $confirmPassword;
+    }
 }

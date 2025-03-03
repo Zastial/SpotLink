@@ -13,6 +13,12 @@
 
         {{ form_start(form, { 'attr': { 'class': 'space-y-4', 'data-turbo': 'false' } }) }}
 
+
+        <div>
+            {{ form_label(form.username, "Nom d'utilisateur", {'label_attr': {'class': 'label-field'}}) }}
+            {{ form_widget(form.username, {'attr': {'class': 'input-field'}}) }}
+            {{ form_errors(form.username) }}
+        </div>
         
         <div>
             {{ form_label(form.first_name, "Prénom", {'label_attr': {'class': 'label-field'}}) }}
