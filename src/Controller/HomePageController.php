@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 final class HomePageController extends AbstractController
 {
     // The route for the home page
-    #[Route('/', name: 'app_home_page')]
+    #[Route('/home', name: 'app_home_page')]
     public function index(
         EventService $eventService,
         CategoryRepository $categoryRepository,
