@@ -14,6 +14,7 @@ module.exports = {
         'red': '#c41a1a',
         'red-dark': '#a71717',
         'green': '#33b020',
+        'green-dark': '#278519',
         'partialrefuse' : '#FEC3A6',
         'partialrefuse-dark' : '#feb692',
         'validate' : '#C9FBAC',

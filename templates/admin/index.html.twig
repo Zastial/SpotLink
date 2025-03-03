@@ -3,12 +3,22 @@
 {% block title %}Hello AdminController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-</div>
+  <!-- Conteneur principal -->
+  <div class="bg-white p-8 rounded-lg shadow-xl w-screen h-screen text-center">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-6">Administration</h1>
+    <!-- Boutons de redirection -->
+    <div class="flex justify-between gap-4 mt-8">
+      <!-- Première option -->
+      <a href="/admin/events" class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary transform hover:scale-105 transition duration-300 ease-in-out">
+        Événements
+      </a>
+
+      <!-- Deuxième option -->
+      <a href="/admin/users" class="w-full bg-green text-white py-3 px-6 rounded-lg hover:bg-green transform hover:scale-105 transition duration-300 ease-in-out">
+        Utilisateurs
+      </a>
+    </div>
+  </div>
+
 {% endblock %}
