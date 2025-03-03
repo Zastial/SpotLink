@@ -12,6 +12,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class HomePageController extends AbstractController
 {
+    #[Route('/', name: 'redirect_home_page')]
+    public function redirectToHomePage(): Response
+    {
+        return $this->redirectToRoute('app_home_page');
+    }
+
     // The route for the home page
     #[Route('/home', name: 'app_home_page')]
     public function index(
