@@ -43,7 +43,7 @@
             <p class="text-center"> Sélectionnez le lieu de l'évènement</p>
             <div>
                 <label for="address" class="label-field">Adresse*</label>
-                <select id="address" class="w-full px-4 py-2"  required="required">
+                <select id="address" class="w-full px-4 py-2">
                     <option value="">Saisir une adresse ou un lieu...</option>
                 </select>
             </div>
@@ -56,40 +56,40 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         {{ form_label(form.house_number, "Numéro de maison", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.house_number, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_widget(form.house_number, {'attr': {'class': 'input-field bg-grey'}}) }}
                     </div>
 
                     <div>
                         {{ form_label(form.road, "Rue", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.road, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_widget(form.road, {'attr': {'class': 'input-field bg-grey'}}) }}
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         {{ form_label(form.postcode, "Code postal", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.postcode, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_widget(form.postcode, {'attr': {'class': 'input-field bg-grey'}}) }}
                     </div>
 
                     <div>
                         {{ form_label(form.city, "Ville", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.city, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_widget(form.city, {'attr': {'class': 'input-field bg-grey'}}) }}
                     </div>
                 </div>
 
                 <div>
                     {{ form_label(form.county, "Département", {'label_attr': {'class': 'label-field'}}) }}
-                    {{ form_widget(form.county, {'attr': {'class': 'input-field'}}) }}
+                    {{ form_widget(form.county, {'attr': {'class': 'input-field bg-grey'}}) }}
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         {{ form_label(form.state, "Région", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.state, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_widget(form.state, {'attr': {'class': 'input-field bg-grey'}}) }}
                     </div>
 
                     <div>
-                        {{ form_label(form.country, "Pays", {'label_attr': {'class': 'label-field'}}) }}
-                        {{ form_widget(form.country, {'attr': {'class': 'input-field'}}) }}
+                        {{ form_label(form.country, "Pays", {'label_attr': {'class': 'label-field '}}) }}
+                        {{ form_widget(form.country, {'attr': {'class': 'input-field bg-grey'}}) }}
                     </div>
                 </div>
                 {{ form_widget(form.osm_id) }}
@@ -108,6 +108,13 @@
 {% block javascripts %}
 <script>
     $(document).ready(function() {
+
+        {% if event_id is defined and event_id %}
+            fillAdressField();
+        {% else %}
+            $('#address').attr('required', 'required');
+        {% endif %}
+
         $('#address').select2({
             minimumInputLength: 3,
             language: {
@@ -135,8 +142,6 @@
             }
         });
 
-        $('#address').attr('required', 'required');
-
         $('#address').on('select2:open', function() {
             document.querySelector('.select2-search__field').focus();
         });
@@ -147,7 +152,6 @@
             $('#event_form_house_number, #event_form_road, #event_form_postcode, #event_form_city, #event_form_county, #event_form_state, #event_form_country, #event_form_osm_id, #event_form_latitude, #event_form_longitude').val('');
 
             const addressDetails = e.params.data['details'];
-            console.log(e.params.data);
 
             'house_number' in addressDetails ? $('#event_form_house_number').val(addressDetails.house_number) : null;
             'road' in addressDetails ? $('#event_form_road').val(addressDetails.road) : null;
@@ -179,6 +183,11 @@
                 return;
             }
         });
+
+        function fillAdressField(){
+            document.getElementById('address-fields').className = "";
+            $('#address').removeAttr('required');
+        }
 
     });
     </script>

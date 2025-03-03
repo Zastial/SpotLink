@@ -103,7 +103,6 @@ final class HomePageController extends AbstractController
             'category_name' => $event->getCategory()->getName(),
             'date_start' => $event->getDateStart()?->format('Y-m-d H:i:s'),
             'date_end' => $event->getDateEnd()?->format('Y-m-d H:i:s'),
-            'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
         ];
         $categories = $categoryRepository->getCategories();
         $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
