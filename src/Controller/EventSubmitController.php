@@ -32,48 +32,67 @@ final class EventSubmitController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/event/submit', name: 'event_submit')]
-    public function new_event(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository): Response
+    #[Route('/event/submit/{id?}', name: 'event_submit')]
+    public function new_event(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
     {
         $event = new Event();
+        $eventStatus = new EventStatus();
+
+        // Récupération de l'événement et de son statut s'ils existent
+        $event = $id ? $eventRepository->find($id) : new Event();
+        $eventStatus = $id ? $eventStatusRepository->findOneBy(['event' => $event]) : new EventStatus();
+        dump($event);
+        dump($eventStatus);
         $form = $this->createForm(EventFormType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->beginTransaction();
-            try{
+            try {
                 //ToDo: à remplacer par le user connecté
                 $user = $userRepository->findOneBy([], ['id' => 'ASC']);
-                $event->setCreator($user);
 
-                $event->setCreatedAt(new \DateTimeImmutable());
-                $this->eventService->save($event);
+                if (!$id) {
+                    $event->setCreator($user);
+                    $event->setCreatedAt(new \DateTimeImmutable());
 
-                // Création du statut de l'événement
-                $eventStatus = new EventStatus();
-                $eventStatus->setEvent($event);
-                $eventStatus->setCreatedAt(new \DateTimeImmutable());
+                    $eventStatus->setEvent($event);
+                    $eventStatus->setCreatedAt(new \DateTimeImmutable());
+                } else {
+                    if ($event->getCreator() != $user) {
+                        throw new \Exception("Vous n'êtes pas autorisé à modifier cet événement", 401);
+                    }
+                    $eventStatus->setComment("");
+                    $eventStatus->setUpdatedAt(new \DateTimeImmutable());
+                }
 
-                // Assigner le statut "CREATED"
-                $status = $statusRepository->find(StatusEnum::CREATED);
+                // Assigner le statut "AWAITING_VALIDATION" pour les nouveaux événements ou évenements modifiés
+                $status = $statusRepository->find(StatusEnum::AWAITING_VALIDATION);
                 $eventStatus->setStatus($status);
+
+                $this->eventService->save($event);
                 $eventStatusRepository->save($eventStatus);
-
                 $this->entityManager->commit();
-                return $this->redirectToRoute('app_home_page');
-            }catch (\Exception $e) {
-                $this->entityManager->rollback();
-                $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'événement : ' . $e->getMessage());
 
+                return $this->redirectToRoute('app_home_page');
+            } catch (\Exception $e) {
+                $this->entityManager->rollback();
+                if ($e->getCode() === 401) {
+                    #TODO : Remplacer par une notif utilisateur
+                    throw new \Exception("Vous n'êtes pas autorisé à modifier cet événement", 401);
+                    #return $this->redirectToRoute('app_home_page');
+                }
+                #TODO : Ajouter une notif utilisateur
                 return $this->redirectToRoute('event_submit');
             }
         }
 
         return $this->render('event_submit/newEvent.html.twig', [
             'form' => $form->createView(),
+            'event_id' => $id,
         ]);
     }
-
+    
     #[Route('/getaddress', name: 'get_address', methods: ['GET'])]
     public function get_address(Request $request){
         
