@@ -105,8 +105,7 @@ final class AdminController extends AbstractController
     {
         $user = $userRepository->find($id);
         if (!$user) {
-            #TODO : Remplacer par une notif utilisateur
-            throw new \Exception("Le compte est introuvable");
+            $this->addFlash('error', "Le compte est introuvable");
         }
         $userRepository->delete($user);
 

@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\CategoryRepository;
 use App\Services\EventCategoryService;
 use App\Services\EventService;
+use App\Services\GetUserInformationService;
 use Symfony\Component\HttpFoundation\Request;
 
 final class UserEventsController extends AbstractController
@@ -21,14 +22,16 @@ final class UserEventsController extends AbstractController
     #[Route('/my-events', name: 'app_my_events')]
     public function events(EventRepository $eventRepository, EventService $eventService,
     CategoryRepository $categoryRepository,
-    EventCategoryService $eventCategoryService,): Response
+    EventCategoryService $eventCategoryService,
+    GetUserInformationService $getUserInformationService,
+    Request $request): Response
     {
-
+        $userDto = $getUserInformationService->getUserInformation($request);
         // Filtrer les événements
-        $events_validate = $eventRepository->getAllEventsFromUserWithStatus(1, StatusEnum::VALIDATED);
-        $events_awaiting = $eventRepository->getAllEventsFromUserWithStatus(1, StatusEnum::AWAITING_VALIDATION);
-        $events_partial_refuse = $eventRepository->getAllEventsFromUserWithStatus(1, StatusEnum::PARTIAL_REFUSED);
-        $events_total_refuse = $eventRepository->getAllEventsFromUserWithStatus(1, StatusEnum::TOTAL_REFUSED);
+        $events_validate = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::VALIDATED);
+        $events_awaiting = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::AWAITING_VALIDATION);
+        $events_partial_refuse = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::PARTIAL_REFUSED);
+        $events_total_refuse = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::TOTAL_REFUSED);
         
         $events = $eventService->getAllWithStatusValidated();
         $categories = $categoryRepository->getCategories();

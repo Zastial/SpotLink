@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Services\GetUserInformationService;
 use App\Mapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class UserInformationsController extends AbstractController
 {
@@ -37,8 +38,8 @@ final class UserInformationsController extends AbstractController
         $userDto = $this->getUserInformationService->getUserInformation($request);
 
         if ($userDto === null) {
-            #TODO : Remplacer par une notif utilisateur
-            throw new \Exception("L'utilisateur est introuvable");
+            $this->addFlash('error', "Le compte utilisateur est introuvable.");
+            return $this->redirectToRoute("user_informations");
         }
 
         $user = $this->entityManager->getRepository(User::class)->find($userDto->id);
@@ -70,10 +71,10 @@ final class UserInformationsController extends AbstractController
 
     //Suppression du compte de l'utilisateur
     #[Route('/delete_account', name: 'delete_account')]
-    public function delete_account(Request $request, UserRepository $userRepository): Response
+    public function delete_account(Request $request, UserRepository $userRepository, GetUserInformationService $getUserInformationService): Response
     {
-        #TODO : Remplacer par user connected
-        $user = $userRepository->findOneBy([], ['id' => 'ASC']);
+        $userDTO = $getUserInformationService->getUserInformation($request);
+        $user = $userRepository->find($userDTO->id);
         try{
             $userRepository->delete($user);
             $this->addFlash('success', "Votre compte a été supprimé avec succès !");
@@ -88,12 +89,13 @@ final class UserInformationsController extends AbstractController
 
     //Changement du mot de passe utilisateur
     #[Route('/change_password', name: 'change_password', methods: ['POST'])]
-    public function change_password(Request $request, UserRepository $userRepository): Response
+    public function change_password(Request $request, UserRepository $userRepository, GetUserInformationService $getUserInformationService, UserPasswordHasherInterface $passwordHasher): Response
     {
-        #TODO : Remplacer par user connected + hasher password
         $data = $request->request->all();
         $plainPassword = $data['password_field'];
-        $user = $userRepository->findOneBy([], ['id' => 'ASC']);
+        $userDTO = $getUserInformationService->getUserInformation($request);
+        $user = $userRepository->find($userDTO->id);
+        $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
 
         try{
             if (!$this->isCsrfTokenValid('change_password', $request->request->get('_token'))) {
@@ -102,7 +104,7 @@ final class UserInformationsController extends AbstractController
             if (!$user){
                 throw new \Exception('Un problème est survenu lors de l\'opération.');
             }
-            $user->setPassword($plainPassword);
+            $user->setPassword($hashedPassword);
             $userRepository->save($user);
             $this->addFlash('success', "Votre mot de pass a été modifié avec succès !");
             return $this->redirectToRoute('user_informations');

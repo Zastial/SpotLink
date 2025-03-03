@@ -14,6 +14,7 @@ use App\Utils\CustomResponse;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\FormInterface;
 
 
 final class RegistrationController extends AbstractController
