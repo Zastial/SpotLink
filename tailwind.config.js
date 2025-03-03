@@ -8,7 +8,11 @@ module.exports = {
     extend: {
       colors: {
         'primary': '#2f299a',
-        'white': '#ffffff'
+        'primary-dark':'#241f78',
+        'white': '#ffffff',
+        'red': '#c41a1a',
+        'red-dark': '#a71717',
+        'green': '#33b020',
       },
       fontFamily: {
         lexend: ['"Lexend Deca"', 'sans-serif'],
@@ -19,6 +23,9 @@ module.exports = {
         0.25:'0.25em',
         0.30:'0.30em',
         0.35:'0.35em',
+        8:'3em',
+        50: '50%',
+        70: '70%',
         80: '80%',
       },
     },

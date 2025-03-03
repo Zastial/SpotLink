@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use App\Repository\CategoryRepository;
-use App\Entity\Category;
+use App\Enum\CategoryEnum;
+use PhpParser\Node\Name;
 
 /**
  * Service de gestion des catégories des événements.
@@ -37,5 +38,22 @@ class EventCategoryService
         }
 
         return $markerColors;
+    }
+
+    public function getIcons(array $eventCategoryMap): array
+    {
+        $categories = $this->categoryRepository->getCategories();
+        $icons = [];
+
+        foreach ($eventCategoryMap as $eventId => $categoryName) {
+            foreach ($categories as $category) {
+                if ($category->getName() === $categoryName) {
+                    $icons[$eventId] = CategoryEnum::from($categoryName)->getIcon();
+                    break;
+                }
+            }
+        }
+
+        return $icons;
     }
 }
