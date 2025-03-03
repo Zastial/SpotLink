@@ -51,7 +51,6 @@ final class HomePageController extends AbstractController
         }, $events);
 
         return $this->render('home_page/index.html.twig', [
-            'controller_name' => 'HomePageController',
             'events' => $events,
             'eventsForJS' => $eventsForJS,
             'markerColors' => $markerColors,
@@ -76,11 +75,49 @@ final class HomePageController extends AbstractController
 
     // The route for the detail page of an event
     #[Route('/event/{id}', name: 'event_detail')]
-    public function show(EventRepository $eventRepository, int $id): Response
+    public function show(
+        EventRepository $eventRepository,
+        CategoryRepository $categoryRepository,
+        EventCategoryService $eventCategoryService,
+        int $id
+    ): Response
     {
         $event = $eventRepository->find($id);
+        $eventForJS = [
+            'id' => $event->getId(),
+            'name' => $event->getName(),
+            'description' => $event->getDescription(),
+            'latitude' => $event->getLatitude(),
+            'longitude' => $event->getLongitude(),
+            'location_name' => $event->getLocationName(),
+            'house_number' => $event->getHouseNumber(),
+            'road' => $event->getRoad(),
+            'postcode' => $event->getPostcode(),
+            'city' => $event->getCity(),
+            'county' => $event->getCounty(),
+            'state' => $event->getState(),
+            'country' => $event->getCountry(),
+            'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
+            'creator' => $event->getCreator(),
+            'status' => $event->getEventStatus()?->getStatus(),
+            'category_name' => $event->getCategory()->getName(),
+            'date_start' => $event->getDateStart()?->format('Y-m-d H:i:s'),
+            'date_end' => $event->getDateEnd()?->format('Y-m-d H:i:s'),
+            'created_at' => $event->getCreatedAt()->format('Y-m-d H:i:s'),
+        ];
+        $categories = $categoryRepository->getCategories();
+        $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
+        $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
+        $icons = $this->getIcons($eventCategoryService, $eventCategoryMap);
+
+        echo "<script>console.log(" . json_encode($eventForJS) . ");</script>";
+
         return $this->render('event/detail.html.twig', [
             'event' => $event,
+            'eventForJS' => $eventForJS,
+            'markerColors' => $markerColors,
+            'icons' => $icons,
+            'categories' => $categories,
         ]);
     }
 }

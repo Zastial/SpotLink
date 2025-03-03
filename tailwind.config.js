@@ -12,6 +12,7 @@ module.exports = {
         'white': '#ffffff',
         'red': '#c41a1a',
         'red-dark': '#a71717',
+        'green': '#33b020',
         'partialrefuse' : '#FEC3A6',
         'partialrefuse-dark' : '#feb692',
         'validate' : '#C9FBAC',
@@ -19,7 +20,7 @@ module.exports = {
         'awaiting' : '#EFE9AE',
         'awaiting-dark' : '#efe68f',
         'totalrefuse' : '#F0604D',
-        'totalrefuse-dark' : '#f0503b'
+        'totalrefuse-dark' : '#f0503b',
       },
       fontFamily: {
         lexend: ['"Lexend Deca"', 'sans-serif'],
