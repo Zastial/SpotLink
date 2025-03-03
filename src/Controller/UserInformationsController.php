@@ -38,8 +38,8 @@ final class UserInformationsController extends AbstractController
         $userDto = $this->getUserInformationService->getUserInformation($request);
 
         if ($userDto === null) {
-            #TODO : Remplacer par une notif utilisateur
-            throw new \Exception("L'utilisateur est introuvable");
+            $this->addFlash('error', "Le compte utilisateur est introuvable.");
+            return $this->redirectToRoute("user_informations");
         }
 
         $user = $this->entityManager->getRepository(User::class)->find($userDto->id);
