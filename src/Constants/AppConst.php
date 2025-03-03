@@ -1,6 +1,6 @@
 <?php
 
-namespace src\App\Const;
+namespace App\Constants;
 
 class AppConst {
     const APP_NAME = 'Spotlink';
