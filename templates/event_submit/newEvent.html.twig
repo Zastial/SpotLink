@@ -97,7 +97,7 @@
                 {{ form_widget(form.longitude) }}
             </div>       
             <p> * Champs obligatoires </p>     
-            <button class="w-full bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
+            <button id="submit_button" class="w-full bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300">
                 Créer
             </button>
             {{ form_end(form) }}
@@ -110,7 +110,7 @@
     $(document).ready(function() {
 
         {% if event_id is defined and event_id %}
-            fillAdressField();
+            updateEventView();
         {% else %}
             $('#address').attr('required', 'required');
         {% endif %}
@@ -179,14 +179,15 @@
                 } else {
                     alert("La date de fin doit être égale ou supérieure à la date actuelle, et supérieure ou égale à la date de début.");
                 }
-                e.preventDefault(); // Empêche l'envoi du formulaire
+                e.preventDefault();
                 return;
             }
         });
 
-        function fillAdressField(){
+        function updateEventView(){
             document.getElementById('address-fields').className = "";
             $('#address').removeAttr('required');
+            document.getElementById('submit_button').innerHTML = "Modifier";
         }
 
     });

@@ -15,7 +15,6 @@ use App\Services\GetUserInformationService;
 use App\Mapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 final class UserInformationsController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
@@ -48,14 +47,22 @@ final class UserInformationsController extends AbstractController
 
         $userform->handleRequest($request);
         if ($userform->isSubmitted() && $userform->isValid()) {
+            try{
+                if (!$user){
+                    throw new \Exception('Un problème est survenu lors de l\'opération.');
+                }
            
-            $userToUpdate = $this->userMapper->mapUserDtoToUser($userDto, $user);
-            
-            $entityManager->persist($userToUpdate);
-            $entityManager->flush();
+                $userToUpdate = $this->userMapper->mapDtoToEntity($userDto, $user);
+                
+                $this->entityManager->persist($userToUpdate);
+                $this->entityManager->flush();
+                $this->addFlash('success', "Vos informations ont été mises à jour !");
 
+            }catch(\Exception $e){
+                $this->addFlash('error', "Un problème est survenu lors de l'opération.");
+                return $this->redirectToRoute("user_informations");
+            }
         }
-
         return $this->render('user_informations/userInformations.html.twig', [
             'userform' => $userform->createView(),
         ]);
@@ -67,12 +74,16 @@ final class UserInformationsController extends AbstractController
     {
         #TODO : Remplacer par user connected
         $user = $userRepository->findOneBy([], ['id' => 'ASC']);
-        if (!$user) {
-            #TODO : Remplacer par une notif utilisateur
-            throw new \Exception("Le compte est introuvable");
+        try{
+            $userRepository->delete($user);
+            $this->addFlash('success', "Votre compte a été supprimé avec succès !");
+
+            #TODO : Enlever les routes pour les users connectés
+            return $this->redirectToRoute('app_home_page');
+        }catch(\Exception $e){
+            $this->addFlash('error', "Un problème est survenu lors de l'opération.");
+            return $this->redirectToRoute("user_informations");
         }
-        $userRepository->delete($user);
-        return $this->redirectToRoute('app_home_page');
     }
 
     //Changement du mot de passe utilisateur
@@ -84,17 +95,20 @@ final class UserInformationsController extends AbstractController
         $plainPassword = $data['password_field'];
         $user = $userRepository->findOneBy([], ['id' => 'ASC']);
 
-        if (!$this->isCsrfTokenValid('change_password', $request->request->get('_token'))) {
-            #TODO : Remplacer par une notif utilisateur
-            throw new \Exception('Le CSRF token est invalide');
-        }
-        if (!$user) {
-            #TODO : Remplacer par une notif utilisateur
-            throw new \Exception("L'utilisateur est introuvable");
-        }else{
+        try{
+            if (!$this->isCsrfTokenValid('change_password', $request->request->get('_token'))) {
+                $this->addFlash('error', "Le CSRF token est invalide");
+            }
+            if (!$user){
+                throw new \Exception('Un problème est survenu lors de l\'opération.');
+            }
             $user->setPassword($plainPassword);
             $userRepository->save($user);
+            $this->addFlash('success', "Votre mot de pass a été modifié avec succès !");
+            return $this->redirectToRoute('user_informations');
+        }catch(\Exception $e){
+            $this->addFlash('error', "Un problème est survenu lors de l'opération.");
+            return $this->redirectToRoute("user_informations");
         }
-        return $this->redirectToRoute('user_informations');
     }
 }

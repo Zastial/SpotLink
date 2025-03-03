@@ -1,0 +1,35 @@
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div id="notification" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-{{ label == 'success' ? 'green' : label == 'error' ? 'red' : 'blue' }} text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2 opacity-0 animate-fadeIn z-50">
+            <span>{{ message }}</span>
+            <button onclick="closeNotification()" class="ml-2 text-white">
+                ✖
+            </button>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<script>
+    function closeNotification() {
+        const notification = document.getElementById('notification');
+        if (notification) {
+            notification.classList.add('animate-fadeOut');
+            setTimeout(() => notification.remove(), 500);
+        }
+    }
+
+    setTimeout(closeNotification, 5000);
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, 20px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translate(-50%, 0); }
+        to { opacity: 0; transform: translate(-50%, 20px); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-fadeOut { animation: fadeOut 0.5s ease-out forwards; }
+</style>
