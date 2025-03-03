@@ -125,7 +125,7 @@ class JwtAuthenticator extends AbstractAuthenticator
      * Gère le cas où l'authentification est requise.
      * Appeler quand l'utilisateur n'est pas authentifié.
      */
-    public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
+    public function start(): RedirectResponse
     {
         // Quand le token est absent ou invalide
         return new RedirectResponse($this->router->generate('app_login'));
