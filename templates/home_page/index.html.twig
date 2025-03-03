@@ -4,8 +4,8 @@
 
 {% block body %}
 <div class="flex justify-center">
-    <div class="flex flex-row w-80 h-[75vh]">
-        <div class="w-1/3 bg-white shadow-lg rounded-lg p-6 mr-4 overflow-y-auto h-[75vh]">
+    <div class="flex flex-col lg:flex-row w-[95vw] md:w-[90vw] lg:w-[80vw]">
+        <div class="desktop-list w-full lg:w-1/3 bg-white shadow-lg rounded-lg p-6 lg:mr-4 overflow-y-auto h-[50vh] lg:h-[75vh] list-visibility">
             <div class="mb-4">
                 <h2 class="text-2xl font-bold text-primary mb-2">Filtre par catégorie</h2>
                 <select id="categoryFilter" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
@@ -51,10 +51,80 @@
                         Aucun événements dans cette région
                     </li>
                 {% endif %}
+                <div id="desktop-no-results" class="hidden p-4 border border-gray-300 rounded-lg text-center">
+                    Aucun événement dans cette catégorie
+                </div>
             </ul>
         </div>
 
-        <div id="map" class="w-2/3 rounded-xl border border-grey-300"></div>
+        <!-- Map (full width on mobile, 2/3 on desktop) -->
+        <div id="map" class="w-full lg:w-2/3 rounded-xl border border-grey-300 h-[65vh] lg:h-[75vh]"></div>
+    </div>
+
+    <div id="mobile-bottom-sheet" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-xl z-40">
+        <!-- Handle/Pull tab -->
+        <div id="bottom-sheet-handle" class="flex justify-center py-2 cursor-pointer">
+            <div class="w-12 h-1 bg-gray-300 rounded-full"></div>
+        </div>
+        
+        <!-- Header -->
+        <div class="px-4 pt-2 pb-4 border-b">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-primary">Événements</h2>
+                <div class="flex items-center">
+                    <span id="event-count" class="mr-2 text-sm bg-primary text-white px-2 py-1 rounded-full">{{ events|length }}</span>
+                    <select id="mobileCategoryFilter" class="p-2 text-sm border border-gray-300 rounded-lg">
+                        <option value="">Tous</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div id="bottom-sheet-content" class="overflow-y-auto px-4 pb-6">
+            <ul class="list-none space-y-4 py-4">
+                {% for event in events %}
+                    <li class="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all cursor-pointer mobile-event-item" tabindex="0" data-event-id="{{ event.id }}" data-category-id="{{ event.category.id }}">
+                        <div class="font-bold text-lg text-primary">
+                            <a data-turbo="false" href="{{ path('event_detail', { 'id': event.id }) }}" class="hover:underline">
+                                {{ event.name|length > 35 ? event.name|slice(0, 35) ~ '...' : event.name }}
+                            </a>
+                            {% if event.locationName %}
+                                - <span class="text-gray-800">{{ event.locationName|length > 15 ? event.locationName|slice(0, 15) ~ '...' : event.locationName }}</span>
+                            {% elseif event.city %}
+                                - <span class="text-gray-800">{{ event.city|length > 15 ? event.city|slice(0, 15) ~ '...' : event.city }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-sm text-gray-600 event-description">{{ event.description }}</div>
+                        <div class="text-sm text-gray-600">
+                            Organisateur : 
+                            {% if event.creator.username %}
+                                {{ event.creator.username }}
+                            {% else %}
+                                {{ event.creator.firstName }} {{ event.creator.lastName }}
+                            {% endif %}
+                        </div>
+                        <div class="text-sm mt-1 flex space-x-2">
+                            <span class="px-1 py-1 rounded-full border" style="border-color: {{ markerColors[event.id] | default('#FFC0CB') }}; color: {{ markerColors[event.id] | default('#000') }};">
+                                <i class="{{ icons[event.id] }}"></i>
+                            </span>
+                            <span class="text-sm rounded-full border-2 px-2 py-1">Date : {{ event.dateStart|date('Y-m-d H:i') }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if events|length == 0 %}
+                    <li class="p-4 border border-gray-300 rounded-lg text-center">
+                        Aucun événements dans cette région
+                    </li>
+                {% endif %}
+                <div id="mobile-no-results" class="hidden p-4 border border-gray-300 rounded-lg text-center">
+                    Aucun événement dans cette catégorie
+                </div>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -83,6 +153,104 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.list-visibility {
+    display: none;
+}
+
+#map {
+    position: relative;
+    z-index: 10;
+}
+
+@media (min-width: 1024px) {
+    body {
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+
+    .list-visibility {
+        display: block !important;
+    }
+
+    #mobile-bottom-sheet {
+        display: none;
+    }
+}
+
+#mobile-bottom-sheet {
+    transform: translateY(calc(100% - 100px));
+    transition: transform 0.3s ease-out;
+    height: 80vh;
+    max-height: 80vh;
+}
+
+#mobile-bottom-sheet.expanded {
+    transform: translateY(0);
+}
+
+/* Safe area padding for iOS devices */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* Prevent map interaction when bottom sheet is expanded */
+.map-inactive {
+    pointer-events: none;
+}
+
+/* Ensure content scrolls properly */
+#bottom-sheet-content {
+    height: calc(100% - 60px);
+}
+
+/* Add a semi-transparent overlay when sheet is expanded */
+.bottom-sheet-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 30;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;
+}
+
+.bottom-sheet-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#bottom-sheet-handle {
+    height: 30px;
+    position: relative;
+    z-index: 45;
+    touch-action: none;
+}
+
+#bottom-sheet-handle .w-12 {
+    transition: background-color 0.2s;
+}
+
+#mobile-bottom-sheet.expanded #bottom-sheet-handle .w-12 {
+    background-color: #d1d5db; /* Darker color when expanded */
+    width: 36px; /* Slightly wider when expanded */
+}
+
+/* Make the visible part clearly interactive */
+#mobile-bottom-sheet:not(.expanded)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    z-index: 1;
+    cursor: pointer;
+}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -90,12 +258,15 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const isMobile = window.innerWidth < 1024;
+        const mapZoom = isMobile ? 5 : 6;
         // Initialize map centered on France
-        var map = L.map('map').setView([46.603354, 1.888334], 6);
+        var map = L.map('map').setView([46.603354, 1.888334], mapZoom);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19
-        }).addTo(map);
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
 
         // Data passed from Symfony controller
         var events = {{ eventsForJS|json_encode|raw }}; // Event data
@@ -199,6 +370,11 @@
                                 this.classList.add('fas');
                                 localStorage.setItem(`favorite-event-${event.id}`, 'true');
                             }
+                            
+                            // Force a redraw of the element to ensure the visual change takes effect
+                            this.style.display = 'none';
+                            this.offsetHeight; // Trigger a reflow
+                            this.style.display = ''; 
                         });
                     }
                 });
@@ -262,17 +438,27 @@
         const categoryFilter = document.getElementById('categoryFilter');
         categoryFilter.addEventListener('change', function() {
             const selectedCategoryId = this.value;
-            const eventItems = document.querySelectorAll('li[data-event-id]');
+            const eventItems = document.querySelectorAll('.desktop-list li[data-event-id]');
+            const noResultsMsg = document.getElementById('desktop-no-results');
+            let visibleCount = 0;
             
             // Filter list items by selected category
             eventItems.forEach(function(item) {
                 const categoryId = item.getAttribute('data-category-id');
                 if (!selectedCategoryId || categoryId === selectedCategoryId) {
                     item.style.display = '';
+                    visibleCount++;
                 } else {
                     item.style.display = 'none';
                 }
             });
+            
+            // Show/hide no results message
+            if (visibleCount === 0 && noResultsMsg) {
+                noResultsMsg.classList.remove('hidden');
+            } else if (noResultsMsg) {
+                noResultsMsg.classList.add('hidden');
+            }
 
             // Update map markers to match filtered list
             for (const [eventId, marker] of Object.entries(markers)) {
@@ -283,6 +469,206 @@
                     marker.addTo(map);
                 }
             }
+        });
+
+        // Bottom Sheet Functionality
+        const bottomSheet = document.getElementById('mobile-bottom-sheet');
+        const bottomSheetHandle = document.getElementById('bottom-sheet-handle');
+        const bottomSheetContent = document.getElementById('bottom-sheet-content');
+        const mapElement = document.getElementById('map');
+
+        // Create overlay element
+        const overlay = document.createElement('div');
+        overlay.classList.add('bottom-sheet-overlay');
+        document.body.appendChild(overlay);
+
+        let startY = 0;
+        let startTranslate = 0;
+        let sheetHeight = bottomSheet ? bottomSheet.offsetHeight : 0;
+        let isDragging = false;
+
+        function updateSheetState(expanded) {
+            if (!bottomSheet) return;
+            
+            if (expanded) {
+                bottomSheet.classList.add('expanded');
+                mapElement.classList.add('map-inactive');
+                overlay.classList.add('visible');
+            } else {
+                bottomSheet.classList.remove('expanded');
+                mapElement.classList.remove('map-inactive');
+                overlay.classList.remove('visible');
+            }
+            
+            // Reset dragging state
+            isDragging = false;
+            startY = 0;
+            
+            // Ensure sheet is using the CSS transition
+            bottomSheet.style.transition = 'transform 0.3s ease-out';
+            bottomSheet.style.transform = '';
+            
+            // Invalidate map size when sheet state changes
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+            }, 300);
+        }
+
+        // Make entire bottom sheet clickable (when in collapsed state)
+        if (bottomSheet) {
+            // Add click handler to the entire bottom sheet
+            bottomSheet.addEventListener('click', function(e) {
+                // Don't handle clicks on interactive elements like the select dropdown
+                if (e.target.tagName === 'SELECT' || e.target.closest('select')) {
+                    return;
+                }
+                
+                const isExpanded = bottomSheet.classList.contains('expanded');
+                
+                // If clicking while expanded, only the handle should collapse it
+                if (isExpanded && !e.target.closest('#bottom-sheet-handle')) {
+                    return;
+                }
+                
+                // Toggle the sheet state
+                updateSheetState(!isExpanded);
+            });
+            
+            // Handle basic touch events for visual feedback during dragging
+            bottomSheetHandle.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                startY = e.touches[0].clientY;
+                bottomSheet.style.transition = 'none';
+                e.preventDefault();
+            }, { passive: false });
+            
+            bottomSheetHandle.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                const currentY = e.touches[0].clientY;
+                const deltaY = currentY - startY;
+                const isExpanded = bottomSheet.classList.contains('expanded');
+                
+                // Allow limited dragging just for visual feedback
+                if ((isExpanded && deltaY > 0) || (!isExpanded && deltaY < 0)) {
+                    // Limit the drag distance for visual feedback
+                    const dragFactor = 0.3; // Reduced drag effect
+                    const limitedDelta = deltaY * dragFactor;
+                    
+                    if (isExpanded) {
+                        bottomSheet.style.transform = `translateY(${limitedDelta}px)`;
+                    } else {
+                        // When collapsed, only allow dragging upward
+                        bottomSheet.style.transform = `translateY(calc(100% - 100px - ${Math.abs(limitedDelta)}px))`;
+                    }
+                }
+                
+                e.preventDefault();
+            }, { passive: false });
+            
+            bottomSheetHandle.addEventListener('touchend', function(e) {
+                if (!isDragging) return;
+                
+                // Always snap to either fully open or closed
+                const isExpanded = bottomSheet.classList.contains('expanded');
+                const currentY = e.changedTouches[0].clientY;
+                const deltaY = currentY - startY;
+                
+                // If dragging down when expanded, or dragging up when collapsed
+                // with sufficient force (more than 30px), toggle the state
+                if ((isExpanded && deltaY > 30) || (!isExpanded && deltaY < -30)) {
+                    updateSheetState(!isExpanded);
+                } else {
+                    // Otherwise, keep current state but reset position
+                    updateSheetState(isExpanded);
+                }
+                
+                isDragging = false;
+            });
+        }
+
+        // Close bottom sheet when overlay is clicked
+        overlay.addEventListener('click', function() {
+            updateSheetState(false);
+        });
+        
+        // Handle category filtering on mobile
+        const mobileCategoryFilter = document.getElementById('mobileCategoryFilter');
+        if (mobileCategoryFilter) {
+            mobileCategoryFilter.addEventListener('change', function() {
+                const selectedCategoryId = this.value;
+                const eventItems = document.querySelectorAll('.mobile-event-item');
+                const noResultsMsg = document.getElementById('mobile-no-results');
+                let visibleCount = 0;
+                
+                // Filter mobile list items
+                eventItems.forEach(function(item) {
+                    const categoryId = item.getAttribute('data-category-id');
+                    if (!selectedCategoryId || categoryId === selectedCategoryId) {
+                        item.style.display = '';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide no results message
+                if (visibleCount === 0 && noResultsMsg) {
+                    noResultsMsg.classList.remove('hidden');
+                } else if (noResultsMsg) {
+                    noResultsMsg.classList.add('hidden');
+                }
+                
+                // Update counter
+                const eventCount = document.getElementById('event-count');
+                if (eventCount) {
+                    eventCount.textContent = visibleCount;
+                }
+                
+                // Mirror filtering to map markers (reuse existing code)
+                for (const [eventId, marker] of Object.entries(markers)) {
+                    const eventElement = document.querySelector(`.mobile-event-item[data-event-id="${eventId}"]`);
+                    if (eventElement && eventElement.style.display === 'none') {
+                        map.removeLayer(marker);
+                    } else if (eventElement && !map.hasLayer(marker)) {
+                        marker.addTo(map);
+                    }
+                }
+            });
+        }
+        
+        // Make mobile event items interactive
+        document.querySelectorAll('.mobile-event-item').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                // Don't trigger if they clicked the link
+                if (e.target.tagName === 'A') return;
+                
+                const eventId = this.getAttribute('data-event-id');
+                const marker = markers[eventId];
+                
+                if (marker) {
+                    map.flyTo(marker.getLatLng(), 13, {
+                        duration: 1.5, 
+                        easeLinearity: 0.25
+                    });
+                    marker.openPopup();
+                    
+                    // Minimize the sheet after selection
+                    updateSheetState(false);
+                }
+            });
+        });
+        
+        // Ensure proper sizing on orientation change
+        window.addEventListener('resize', function() {
+            sheetHeight = bottomSheet ? bottomSheet.offsetHeight : 0;
+            
+            // Reset the sheet position
+            if (bottomSheet && !bottomSheet.classList.contains('expanded')) {
+                bottomSheet.style.transform = 'translateY(calc(100% - 60px))';
+            }
+            
+            if (map) map.invalidateSize();
         });
     });
 </script>

@@ -1,14 +1,14 @@
-<header class="flex justify-between items-center px-6 py-3">
-    <div class="p-2 rounded-full flex items-center justify-between gap-6 mx-auto border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
-        <div class="py-2 md:flex items-center gap-3 bg-primary rounded-full px-4 py-0.35">
+<header class="flex justify-between items-center px-6 py-3 w-full">
+    <div class="p-2 rounded-full flex items-center justify-between gap-6 md:mx-auto w-full md:w-auto border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
+        <div class="flex items-center gap-3 bg-primary rounded-full px-4 py-2">
             <a href="/home" data-turbo="false"> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
                 <i class="fa-solid fa-map-location-dot text-xl text-white"></i>
                 <span class="text-2xl font-extrabold text-white">SpotLink</span>
             </a>
         </div>
         <nav class="hidden md:flex gap-6 items-center pr-4">
-            <a href="/home" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
-            <a href="/home" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
+            <a href="/" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
+            <a href="/my-events" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
         </nav>
         
         <div class="md:hidden px-4 py-2">
@@ -18,19 +18,19 @@
         </div>
     </div>
     <div class="hidden md:flex gap-0.2 items-center">
-        <a href="/user_informations">
+        <a href="/user_informations" data-turbo="false">
             <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
                 <i class="fa-solid fa-user text-primary text-xl"></i>
             </div>
         </a>
         <!--TODO: Ajouter la route de la partie admin + roles-->
-        <a href="/admin">
+        <a href="/admin" data-turbo="false">
             <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
                 <i class="fa-solid fa-user-tie text-green text-xl"></i>
             </div>
         </a>
         <!--TODO: Ajouter la route du logout-->
-        <a href="/logout">
+        <a href="/logout" data-turbo="false">
             <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
                 <i class="fa-solid fa-right-from-bracket text-primary text-xl text-red"></i>
             </div>
@@ -47,11 +47,11 @@
     </div>
     <nav class="flex flex-col p-4 gap-4">
         <!--TODO: Ajouter les routes + authoriser seulement certaine pour les users connectés et non connectés-->
-        <a href="/home" class="text-lg text-gray-800 hover:underline">Voir la carte</a>
-        <a href="/home" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
-        <a href="/user_informations" class="text-lg text-gray-800 hover:underline">Mon compte</a>
-        <a href="/home" class="text-lg text-green hover:underline">Administration</a>
-        <a href="/home" class="text-lg text-red hover:underline">Se déconnecter</a>
+        <a href="/home" data-turbo="false" class="text-lg text-gray-800 hover:underline">Voir la carte</a>
+        <a href="/my-events" data-turbo="falsehome" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
+        <a href="/user_informations" data-turbo="false" class="text-lg text-gray-800 hover:underline">Mon compte</a>
+        <a href="/home" data-turbo="false" class="text-lg text-green hover:underline">Administration</a>
+        <a href="/home" data-turbo="false" class="text-lg text-red hover:underline">Se déconnecter</a>
     </nav>
 </div>
 

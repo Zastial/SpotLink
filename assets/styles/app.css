@@ -11,3 +11,16 @@
         @apply block text-gray-700 font-medium;
     }
 }
+
+/* Styles pour agrandir l'interface sur mobile */
+@media (max-width: 1023px) {
+
+    /* Textes plus grands */
+    .text-lg {
+        font-size: 1.25rem !important;
+    }
+
+    .text-sm {
+        font-size: 1rem !important;
+    }
+}

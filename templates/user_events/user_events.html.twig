@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MY EVENTS
+{% endblock %}
+
+{% block body %}
+	<body class="p-8 bg-gray-100">
+		<div class="w-md mx-auto space-y-4 flex flex-col items-center">
+			{% for info in events %}
+				<div class="border rounded-lg w-[80%]">
+					<button class="w-full text-left p-4 {{ info['background'] }} hover:{{ info['background'] }}-dark flex justify-between items-center" onclick="toggleAccordion({{ loop.index }})">
+						<span>{{info['nom']}}
+							({{info['events']|length}})</span>
+						<span id="icon-{{loop.index}}" class="transition-transform">▼</span>
+					</button>
+					<div id="content-{{loop.index}}" class="hidden p-4 bg-white">
+						<ul class="grid grid-cols-[repeat(auto-fit,_300px)] gap-4 w-full">
+							{% if info['events']|length > 0 %}
+								{% for event in info['events'] %}
+									<li class="w-[300px] p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all cursor-pointer" tabindex="0" data-event-id="{{ event.id }}" data-category-id="{{ event.category.id }}">
+										<div class="font-bold text-lg text-primary">
+											{% if event.eventStatus.status.id == 5 %}
+												<a href="{{ path('event_submit', { 'id': event.id }) }}" class="hover:underline">
+													{{ event.name|length > 35 ? event.name|slice(0, 35) ~ '...' : event.name }}
+												</a>
+											{% else %}
+												<a href="{{ path('event_detail', { 'id': event.id }) }}" class="hover:underline">
+													{{ event.name|length > 35 ? event.name|slice(0, 35) ~ '...' : event.name }}
+												</a>
+											{% endif %}
+                                            
+											{% if event.locationName %}
+												-
+												<span class="text-gray-800">{{ event.locationName|length > 15 ? event.locationName|slice(0, 15) ~ '...' : event.locationName }}</span>
+											{% elseif event.city %}
+												-
+												<span class="text-gray-800">{{ event.city|length > 15 ? event.city|slice(0, 15) ~ '...' : event.city }}</span>
+											{% endif %}
+										</div>
+										<div class="text-sm text-gray-600 event-description">{{ event.description }}</div>
+										<div class="text-sm mt-1 flex space-x-2">
+											<span class="px-1 py-1 rounded-full border" style="border-color: {{ markerColors[event.id] | default('#FFC0CB') }}; color: {{ markerColors[event.id] | default('#000') }};">
+												<i class="{{ icons[event.id] }}"></i>
+											</span>
+											<span class="text-sm rounded-full border-2 px-2 py-1">Date :
+												{{ event.dateStart|date('Y-m-d H:i') }}</span>
+										</div>
+										{% if event.eventStatus.status.id == 4 or event.eventStatus.status.id == 5 %}
+											{% if event.eventStatus.status.id == 4 or event.eventStatus.status.id == 5 %}
+												<div class="mt-2 p-3 bg-gray-100 border-l-4 border-red text-gray-800 rounded-md shadow-sm">
+													<p class="text-sm font-semibold text-red-600">Raison du refus :</p>
+													<p class="text-sm italic">"{{ event.getEventStatus().getComment() }}"</p>
+												</div>
+											{% endif %}
+
+										{% endif %}
+
+									</li>
+								{% endfor %}
+							{% else %}
+								<p>Aucun évènement présent !</p>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+		<script>
+			function toggleAccordion(id) {
+const content = document.getElementById (`content-${id}`);
+const icon = document.getElementById (`icon-${id}`);
+content.classList.toggle("hidden");
+icon.classList.toggle("rotate-180");
+}
+		</script>
+	</body>
+{% endblock %}
