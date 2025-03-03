@@ -20,12 +20,11 @@
 
 			<button type="submit" class="bg-primary text-white px-4 py-2 rounded-full">Filtrer</button>
 		</form>
-
-		<table class="min-w-[90%] border border-gray shadow-lg rounded-lg pt-5">
+		<div class="w-[90vw] overflow-x-auto mx-auto">
+		<table class="w-full border border-gray shadow-lg rounded-lg pt-5">
 			<tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-				<th class="py-3 px-6 text-left">Id</th>
-				<th class="py-3 px-6 text-left">Catégorie</th>
 				<th class="py-3 px-6 text-left">Titre</th>
+				<th class="py-3 px-6 text-left">Catégorie</th>
 				<th class="py-3 px-6 text-left">Description</th>
 				<th class="py-3 px-6 text-left">Adresse</th>
                 <th class="py-3 px-6 text-left">Status</th>
@@ -38,9 +37,8 @@
 			</tr>
 			{% for event in events %}
 				<tr class="border-b border-gray-200 hover:bg-gray-100">
-					<td class="py-3 px-6 text-left">{{ event.id }}</td>
-					<td class="py-3 px-6 text-left">{{ event.category.name }}</td>
 					<td class="py-3 px-6 text-left">{{ event.name }}</td>
+					<td class="py-3 px-6 text-left">{{ event.category.name }}</td>
 					<td class="py-3 px-6 text-left">{{ event.description }}</td>
 					<td class="py-3 px-6 text-left">{{ event.locationName }}</td>
                     <td class="py-3 px-6 text-left">{{ event.eventStatus.status.name }}</td>
@@ -50,15 +48,15 @@
 					            <td class="py-3 px-6 text-left">{{ event.dateEnd|date('Y-m-d H:i:s') }}</td>
 					             #}
 					<td>
-						{# <a href="{{ path('admin_event_validate', {'id': event.id}) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Valider</a>
-						                <a href="{{ path('admin_event_delete', {'id': event.id}) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</a> #}
 						{% if event.eventStatus.status.id == 2 %}
-						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green hover:bg-green-dark text-white font-bold py-2 px-4 rounded-full">Valider</a>
-						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red hover:bg-red-dark text-white font-bold py-2 px-4 rounded-full">Refuser</a>
+						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green text-white hover:bg-green-dark font-bold py-2 px-4 rounded-full"><i class="fas fa-check-circle text-white"></i></a>
+						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red text-white hover:bg-red-dark font-bold py-2 px-4 rounded-full"><i class="fas fa-times-circle text-white"></i></a>
 						{% endif %}
+						<a href="{{ path('event_detail', {'id': event.id}) }}" class="bg-primary text-white hover:bg-primary-dark font-bold py-2 px-4 rounded-full"><i class="fa-solid fa-eye text-white"></i></i></a>
 					</td>
 				</tr>
 			{% endfor %}
 		</table>
+		</div>
 	</div>
 {% endblock %}

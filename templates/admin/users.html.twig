@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ADMIN - EVENTS
+{% endblock %}
+
+{% block body %}
+
+	<div class="flex flex-col items-center w-[90vw] overflow-x-auto mx-auto">
+		<h1 class="pt-5 pb-5 text-lg">Utilisateurs</h1>
+
+		<table class="w-full border border-gray shadow-lg rounded-lg pt-5">
+			<tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+				<th class="py-3 px-6 text-left">Prénom</th>
+				<th class="py-3 px-6 text-left">Nom</th>
+				<th class="py-3 px-6 text-left">Email</th>
+				<th class="py-3 px-6 text-left">Vérifié</th>
+				<th class="py-3 px-6 text-left">Role</th>	             
+				<th class="py-3 px-6 text-left">Actions</th>
+			</tr>
+			{% for user in users %}
+				<tr class="border-b border-gray-200 hover:bg-gray-100">
+					<td class="py-3 px-6 text-left">{{ user.getFirstName() }}</td>
+					<td class="py-3 px-6 text-left">{{ user.getLastName() }}</td>
+					<td class="py-3 px-6 text-left">{{ user.getEmail() }}</td>
+					<td class="py-3 px-6 text-left">
+						{% if user.isVerify() %}
+							<i class="fas fa-check-circle text-green"></i>
+							Vérifié
+						{% else %}
+							<i class="fas fa-times-circle text-red"></i>
+							Non vérifié
+						{% endif %}
+					</td>
+					<td class="py-3 px-6 text-left">
+						<select name="role" class="border p-2 rounded" data-user-id="{{ user.id }}" onchange="updateUserRole(this)">
+							{% for role in roles %}
+								<option value="{{ role.id }}" {% if user.getRole().id == role.id %} selected {% endif %}>
+									{{ role.name }}
+								</option>
+							{% endfor %}
+						</select>
+					</td>
+					<td>
+                        <a href="{{ path('app_admin_user_delete', {'id': user.id}) }}" class="bg-red hover:bg-red-dark text-white font-bold py-2 px-4 rounded-full">Supprimer</a>
+                    </td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+    <script>
+function updateUserRole(selectElement) {
+    const userId = selectElement.dataset.userId; // Récupère l'ID de l'utilisateur
+    const newRoleId = selectElement.value; // Récupère le nouvel ID du rôle
+
+    fetch('/admin/update-role', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ userId, newRoleId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Le rôle a bien été mis à jour !");
+        } else {
+            alert("Erreur lors de la mise à jour du rôle.");
+        }
+    })
+    .catch(error => console.error('Erreur :', error));
+}
+</script>
+{% endblock %}
+
+

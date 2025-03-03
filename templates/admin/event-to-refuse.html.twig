@@ -7,7 +7,8 @@
 
 	<div class="flex flex-col items-center">
 		<h1 class="pt-5 pb-5 text-lg">Rappel des Informations</h1>
-		<table class="min-w-[90%] border border-gray shadow-lg rounded-lg">
+		<div class="w-[90vw] overflow-x-auto mx-auto">
+		<table class="w-full border border-gray shadow-lg rounded-lg">
 			<tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
 				<th class="py-3 px-6 text-left">Id</th>
 				<th class="py-3 px-6 text-left">Catégorie</th>
@@ -23,7 +24,7 @@
 				<td class="py-3 px-6 text-left">{{ event.locationName }}</td>
 			</tr>
 		</table>
-
+		</div>
 		<form method="POST" class="pt-8 space-y-4">
 			<div class="flex flex-col">
 				<label for="statusId" class="text-lg font-medium text-gray-700">Action :</label>
