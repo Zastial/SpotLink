@@ -12,6 +12,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class HomePageController extends AbstractController
 {
+    #[Route('/', name: 'redirect_home_page')]
+    public function redirectToHomePage(): Response
+    {
+        return $this->redirectToRoute('app_home_page');
+    }
+
     // The route for the home page
     #[Route('/home', name: 'app_home_page')]
     public function index(
@@ -108,8 +114,6 @@ final class HomePageController extends AbstractController
         $eventCategoryMap[$event->getId()] = $event->getCategory()->getName();
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
         $icons = $this->getIcons($eventCategoryService, $eventCategoryMap);
-
-        echo "<script>console.log(" . json_encode($eventForJS) . ");</script>";
 
         return $this->render('event/detail.html.twig', [
             'event' => $event,
