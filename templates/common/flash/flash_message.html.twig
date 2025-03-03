@@ -1,0 +1,15 @@
+
+
+{% for label, flashes in app.session.flashbag.all %}
+    {% for flash in flashes %}
+        {% if label == 'success' %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ flash }}
+            </div>
+        {% elseif label == 'error' %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ flash }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endfor %}

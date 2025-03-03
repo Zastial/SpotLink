@@ -30,6 +30,7 @@
      <body class="font-lexend min-h-screen flex flex-col">
         {% include 'common/header.html.twig' %}
         <main class="flex-1">
+            {% include 'common/flash/flash_message.html.twig' %}
             {% block body %}
             {% endblock %}
         </main>

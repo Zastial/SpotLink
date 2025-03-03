@@ -1,0 +1,9 @@
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        <ul class="bg-red-100 text-red-700 p-2 rounded mt-2">
+            {% for error in errors %}
+                <li>{{ error.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

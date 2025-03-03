@@ -3,8 +3,8 @@
 namespace App\Controller;
 use App\Repository\EventRepository;
 use App\Repository\CategoryRepository;
-use App\Service\EventCategoryService;
-use App\Service\EventService;
+use App\Services\EventCategoryService;
+use App\Services\EventService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 final class HomePageController extends AbstractController
 {
     // The route for the home page
-    #[Route('/', name: 'app_home_page')]
+    #[Route('/home', name: 'app_home_page')]
     public function index(
         EventService $eventService,
         CategoryRepository $categoryRepository,
