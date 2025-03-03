@@ -17,10 +17,12 @@ security:
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
+            stateless: true
             security: false
 
         public:
-            pattern: ^/(login|home|register)
+            pattern: ^/(login|home|register|access-denied)
+            stateless: true
             security: false
 
         main:
@@ -38,7 +40,7 @@ security:
             #     invalidate_session: false
 
             # Gestion des redirections pour les utilisateurs n'ayant pas les droits suffisants
-            access_denied_handler: App\Security\AccessDeniedHandler
+            #access_denied_handler: App\Security\AccessDeniedHandler
 
 
     # Easy way to control access for large sections of your site
@@ -46,9 +48,10 @@ security:
     access_control:
         # Les pages de login home et inscription sont accessibles anonymement
         - { path: ^/(login|register|home), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/access-denied, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
-        - { path: ^/admin, roles: ADMIN }
-        - { path: ^/profile, roles: USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
         
         # Le reste des pages nécessite d'être connecté (par exemple ROLE_USER)
         - { path: ^/, roles: USER }

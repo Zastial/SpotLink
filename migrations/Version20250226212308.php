@@ -13,17 +13,19 @@ use App\Enum\Role;
  */
 final class Version20250226212308 extends AbstractMigration
 {
-     public function up(Schema $schema): void
+    public function getDescription(): string
     {
-        foreach (Role::cases() as $role) {
-            $this->addSql("INSERT INTO role (roleValue) VALUES ('{$role->value}')");
-        }
+        return '';
+    }
+
+    public function up(Schema $schema): void
+    {
+        $this->addSql("INSERT INTO role (id, name) VALUES (1, 'USER')");
+        $this->addSql("INSERT INTO role (id, name) VALUES (2, 'ADMIN')");
     }
 
     public function down(Schema $schema): void
     {
-        foreach (Role::cases() as $role) {
-            $this->addSql("DELETE FROM roleValue WHERE name = '{$role->value}'");
-        }
+        $this->addSql('CREATE SCHEMA public');
     }
 }
