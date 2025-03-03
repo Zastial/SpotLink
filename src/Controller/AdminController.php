@@ -72,7 +72,7 @@ final class AdminController extends AbstractController
     public function eventsToValidate(int $id, EventRepository $eventRepository, StatusRepository $statusRepository, EntityManagerInterface $entityManagerInterface): Response
     {
         $events = $eventRepository->find($id);
-        $status = $statusRepository->find(StatusEnum::VALIDATED->value);
+        $status = $statusRepository->find(StatusEnum::VALIDATED);
         $events->getEventStatus()->setStatus($status);
         $events->getEventStatus()->setUpdatedAt(new \DateTimeImmutable());
         $entityManagerInterface->flush();

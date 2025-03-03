@@ -30,7 +30,7 @@ class EventRepository extends ServiceEntityRepository
             ->innerJoin('e.eventStatus', 'es')
             ->innerJoin('es.status', 's')
             ->andWhere('s.id = :statusId')
-            ->setParameter('statusId', StatusEnum::VALIDATED->value)
+            ->setParameter('statusId', StatusEnum::VALIDATED)
             ->orderBy('e.id', 'ASC')
             ->getQuery()
             ->getResult();
@@ -45,7 +45,7 @@ class EventRepository extends ServiceEntityRepository
             ->innerJoin('e.eventStatus', 'es')  // Jointure avec la table event_status
             ->innerJoin('es.status', 's')       // Jointure avec la table status
             ->andWhere('s.id = :statusId')      // Condition sur le status.id
-            ->setParameter('statusId', StatusEnum::AWAITING_VALIDATION->value)       // Valeur du paramètre (status_id = 1)
+            ->setParameter('statusId', StatusEnum::AWAITING_VALIDATION)       // Valeur du paramètre (status_id = 1)
             ->orderBy('e.id', 'ASC')
             ->getQuery()
             ->getResult();

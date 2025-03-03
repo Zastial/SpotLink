@@ -17,14 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class UserEventsController extends AbstractController
 {
-    #[Route('/admin', name: 'app_admin')]
-    public function index(): Response
-    {
-        return $this->render('admin/index.html.twig', [
-            'controller_name' => 'AdminController',
-        ]);
-    }
-
+    
     #[Route('/my-events', name: 'app_my_events')]
     public function events(EventRepository $eventRepository, EventService $eventService,
     CategoryRepository $categoryRepository,
