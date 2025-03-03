@@ -10,10 +10,19 @@ module.exports = {
         'primary': '#2f299a',
         'primary-dark':'#241f78',
         'white': '#ffffff',
+        'grey': '#e7e7e7',
         'red': '#c41a1a',
         'red-dark': '#a71717',
         'green': '#33b020',
         'green-dark': '#278519',
+        'partialrefuse' : '#FEC3A6',
+        'partialrefuse-dark' : '#feb692',
+        'validate' : '#C9FBAC',
+        'validate-dark' : '#b1fb87',
+        'awaiting' : '#EFE9AE',
+        'awaiting-dark' : '#efe68f',
+        'totalrefuse' : '#F0604D',
+        'totalrefuse-dark' : '#f0503b',
       },
       fontFamily: {
         lexend: ['"Lexend Deca"', 'sans-serif'],
@@ -31,5 +40,11 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    {
+      pattern: /^bg-(red|blue|green|yellow|purple|gray|pink|indigo|teal|cyan|lime|partialrefuse|validate|awaiting|totalrefuse)(-(100|200|300|400|500|600|700|800|900|dark))?$/,
+      variants: ["hover"],
+    },
+  ],
   plugins: [],
 }

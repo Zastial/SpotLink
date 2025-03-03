@@ -24,13 +24,27 @@ class EventFormType extends AbstractType
             ->add('latitude', HiddenType::class)
             ->add('longitude', HiddenType::class)
             ->add('location_name')
-            ->add('house_number')
-            ->add('road')
-            ->add('city')
-            ->add('postcode')
-            ->add('state')
-            ->add('county')
-            ->add('country')
+            ->add('house_number', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('road', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('city', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('postcode', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('state', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('county', null, [
+                'attr' => ['readonly' => true],
+            ])
+            ->add('country', null, [
+                'attr' => ['readonly' => true],
+            ])
             ->add('date_start', null, [
                 'widget' => 'single_text',
             ])

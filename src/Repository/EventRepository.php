@@ -72,6 +72,23 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getAllEventsFromUserWithStatus(?int $user_id, StatusEnum $status): array
+{
+    $qb = $this->createQueryBuilder('e')
+        ->innerJoin('e.eventStatus', 'es')
+        ->innerJoin('es.status', 's')
+        ->innerJoin('e.creator', 'u') 
+        ->andWhere('e.creator = :user_id')
+        ->setParameter('user_id', $user_id)
+        ->andWhere('s.id = :status')
+        ->setParameter('status', $status->value);
+
+    return $qb->orderBy('e.created_at', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
+
+
 
     //    /**
     //     * @return Event[] Returns an array of Event objects

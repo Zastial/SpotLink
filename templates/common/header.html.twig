@@ -8,7 +8,7 @@
         </div>
         <nav class="hidden md:flex gap-6 items-center pr-4">
             <a href="/" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
-            <a href="/" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
+            <a href="/my-events" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
         </nav>
         
         <div class="md:hidden px-4 py-2">
@@ -48,7 +48,7 @@
     <nav class="flex flex-col p-4 gap-4">
         <!--TODO: Ajouter les routes + authoriser seulement certaine pour les users connectés et non connectés-->
         <a href="/" class="text-lg text-gray-800 hover:underline">Voir la carte</a>
-        <a href="/" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
+        <a href="/my-events" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
         <a href="/user_informations" class="text-lg text-gray-800 hover:underline">Mon compte</a>
         <a href="/admin/events" class="text-lg text-green hover:underline">Administration</a>
         <a href="/" class="text-lg text-red hover:underline">Se déconnecter</a>
