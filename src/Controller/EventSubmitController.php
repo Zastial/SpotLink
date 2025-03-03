@@ -14,7 +14,7 @@ use App\Entity\EventStatus;
 use App\Repository\EventRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Service\EventService;
+use App\Services\EventService;
 use App\Repository\UserRepository;
 use App\Repository\StatusRepository;
 use Doctrine\ORM\EntityManagerInterface;

@@ -36,6 +36,8 @@ Then launch the app :
 
 ```
 symfony server:start
+php bin/console server:run
+php -S 127.0.0.1:8000 -t public/
 ```
 
 To Run Tailwind watcher :
@@ -43,3 +45,17 @@ To Run Tailwind watcher :
 ```
 php bin/console tailwind:build --watch
 ```
+
+postgres
+net start postgresql
+
+
+
+# Authentification
+
+Nous utilisons le JWT pour s'authentifier.
+Dans le security.yml sont indiqués les rôles nécessaires pour pouvoir accès aux différentes routes.
+
+* Le service `JwtAuthenticator` permet de gérer l'authentification via le JWT. Il intervient avant d'accéder aux controlleurs et permet ainsi de sécuriser l'accès aux ressources.
+
+* Le service `JwtService` permet de gérer la création et validation des tokens JWT avec les différents claims pour notre application. 

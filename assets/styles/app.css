@@ -6,7 +6,21 @@
     .input-field {
         @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent;
     }
+
     .label-field {
         @apply block text-gray-700 font-medium;
-    } 
+    }
+}
+
+/* Styles pour agrandir l'interface sur mobile */
+@media (max-width: 1023px) {
+
+    /* Textes plus grands */
+    .text-lg {
+        font-size: 1.25rem !important;
+    }
+
+    .text-sm {
+        font-size: 1rem !important;
+    }
 }
