@@ -37,6 +37,6 @@ final class AccessDeniedController extends AbstractController
     #[Route('/access-denied', name: 'app_access_denied')]
     public function accessDenied(): Response
     {
-        return $this->render('security/access_denied.html.twig');
+        return $this->render('error/access_denied.html.twig');
     }
 }
