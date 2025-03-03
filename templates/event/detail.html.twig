@@ -9,9 +9,9 @@
         <div class="bg-primary text-white p-6">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold">{{ event.name }}</h1>
-                <span class="px-2 py-2 rounded-full border bg-white" style="border-color: {{ markerColors[event.id] | default('#FFC0CB') }}; color: {{ markerColors[event.id] | default('#000') }};">
+                <span class="px-2 py-2 rounded-full border bg-white flex items-center" style="border-color: {{ markerColors[event.id] | default('#FFC0CB') }}; color: {{ markerColors[event.id] | default('#000') }};">
                     <i class="{{ icons[event.id] }}"></i>
-                    <span>{{event.category.name}}</span>
+                    <span class="ml-2">{{ event.category.name }}</span>
                 </span>
             </div>
         </div>
