@@ -57,6 +57,7 @@ final class AdminController extends AbstractController
             $events->getEventStatus()->setComment($comment);
             $events->getEventStatus()->setUpdatedAt(new \DateTimeImmutable());
             $entityManagerInterface->flush();
+            $this->addFlash('success', "L'évènement a bien été refusé");
 
             return $this->redirectToRoute('app_admin_events');
         }
@@ -76,6 +77,7 @@ final class AdminController extends AbstractController
         $events->getEventStatus()->setStatus($status);
         $events->getEventStatus()->setUpdatedAt(new \DateTimeImmutable());
         $entityManagerInterface->flush();
+        $this->addFlash('success', "L'évènement a bien été validé");
 
         return $this->redirectToRoute('app_admin_events');
     }

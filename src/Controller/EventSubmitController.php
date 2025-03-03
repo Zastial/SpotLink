@@ -37,6 +37,7 @@ final class EventSubmitController extends AbstractController
     {
         $event = new Event();
         $eventStatus = new EventStatus();
+        $event_message = "";
 
         // Récupération de l'événement et de son statut s'ils existent
         $event = $id ? $eventRepository->find($id) : new Event();
@@ -56,12 +57,15 @@ final class EventSubmitController extends AbstractController
 
                     $eventStatus->setEvent($event);
                     $eventStatus->setCreatedAt(new \DateTimeImmutable());
+
+                    $message = "créé";
                 } else {
                     if ($event->getCreator() != $user) {
                         throw new \Exception("Vous n'êtes pas autorisé à modifier cet événement", 401);
                     }
                     $eventStatus->setComment("");
                     $eventStatus->setUpdatedAt(new \DateTimeImmutable());
+                    $message = "modifié";
                 }
 
                 // Assigner le statut "AWAITING_VALIDATION" pour les nouveaux événements ou évenements modifiés
@@ -72,15 +76,15 @@ final class EventSubmitController extends AbstractController
                 $eventStatusRepository->save($eventStatus);
                 $this->entityManager->commit();
 
+                $this->addFlash('success', 'Événement ' . $message . ' avec succès !');
                 return $this->redirectToRoute('app_home_page');
             } catch (\Exception $e) {
                 $this->entityManager->rollback();
                 if ($e->getCode() === 401) {
-                    #TODO : Remplacer par une notif utilisateur
-                    throw new \Exception("Vous n'êtes pas autorisé à modifier cet événement", 401);
-                    #return $this->redirectToRoute('app_home_page');
+                    $this->addFlash('error', $e->getMessage());
+                    return $this->redirectToRoute('app_home_page');
                 }
-                #TODO : Ajouter une notif utilisateur
+                $this->addFlash('error', "Un problème est survenu lors de l'opération");
                 return $this->redirectToRoute('event_submit');
             }
         }

@@ -19,7 +19,8 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-     <body class="font-lexend min-h-screen flex flex-col">
+    <body class="font-lexend min-h-screen flex flex-col">
+        {% include 'common/notification.html.twig' %}
         {% include 'common/header.html.twig' %}
         <main class="flex-1">
             {% block body %}
