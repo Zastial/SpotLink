@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class EventStatusRepository extends ServiceEntityRepository
 {
+    private $entityManager;
+
     public function __construct(ManagerRegistry $registry, EntityManagerInterface  $entityManager)
     {
         parent::__construct($registry, EventStatus::class);
