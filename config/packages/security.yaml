@@ -21,7 +21,7 @@ security:
             security: false
 
         public:
-            pattern: ^/(login|home|register|access_denied|logout|redirect_page)
+            pattern: ^/(login|home|register|access_denied|logout|redirect_home_page|event)
             stateless: true
             security: false
 
@@ -44,12 +44,13 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Les pages de login home et inscription sont accessibles anonymement
-        - { path: ^/(login|register|home|logout|access_denied|redirect_page), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(login|register|home|logout|access_denied|redirect_home_page|event), roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/*, roles: ROLE_ADMIN }
         - { path: ^/user_informations, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/change_password, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/delete_account, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/event/*, roles: ['ROLE_USER','ROLE_ADMIN'] }
+        - { path: ^/create_event, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/admin/*, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/my-events/*, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/, roles: ['ROLE_USER','ROLE_ADMIN'] }
