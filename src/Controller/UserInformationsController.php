@@ -46,7 +46,7 @@ final class UserInformationsController extends AbstractController
         $userform = $this->createForm(UserInformationsFormType::class, $userDto);
 
         $userform->handleRequest($request);
-        if ($userform->isSubmitted() && $userform->isValid()) {
+        if ($userform->isSubmitted()) {
             try {
                 if (!$user) {
                     throw new \Exception('Un problème est survenu lors de l\'opération.');

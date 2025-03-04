@@ -21,8 +21,9 @@ class UserInformationsFormType extends AbstractType
             ->add('username')
             ->add('first_name')
             ->add('last_name')
-            ->add('email', EmailType::class)
-            ->add('is_verify',HiddenType::class)
+            ->add('email', EmailType::class, [
+                'attr' => ['readonly' => true]
+            ])
         ;
     }
 
@@ -30,6 +31,7 @@ class UserInformationsFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UserDto::class,
+            'validation_groups'=> ['user_informations'],
         ]);
     }
 }
