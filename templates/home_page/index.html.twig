@@ -332,52 +332,10 @@
                                 <a data-turbo="false" href="/event/${event.id}" class="text-primary hover:underline">
                                     Voir les détails
                                 </a>
-                                <i class="far fa-star favorite-star cursor-pointer" data-event-id="${event.id}" style="font-size: 1.5em; color: orange;"></i>
                             </div>
                         </div>
                     `);
-                
-                // Handle popup opening to manage favorite star functionality
-                marker.on('popupopen', function(e) {
-                    const popup = e.popup;
-                    const popupContent = popup.getElement();
-                    const star = popupContent.querySelector('.favorite-star');
-                    
-                    if (star) {
-                        // Remove any existing event listeners to prevent duplicates
-                        star.replaceWith(star.cloneNode(true));
-                        const newStar = popupContent.querySelector('.favorite-star');
-                        
-                        // WAITING FOR USER TO BE IMPLEMENTED
-                        // FOR NOW, STORE IN LOCAL STORAGE
-                        const isFavorite = localStorage.getItem(`favorite-event-${event.id}`) === 'true';
-                        
-                        newStar.className = isFavorite 
-                            ? 'fas fa-star favorite-star cursor-pointer' // Solid star
-                            : 'far fa-star favorite-star cursor-pointer'; // Outline star
-                        
-                        newStar.addEventListener('click', function(e) {
-                            e.stopPropagation(); // Prevent popup from closing when star is clicked
-                            
-                            const isFavoriteNow = this.classList.contains('fas');
-                            
-                            if (isFavoriteNow) {
-                                this.classList.remove('fas');
-                                this.classList.add('far');
-                                localStorage.setItem(`favorite-event-${event.id}`, 'false');
-                            } else {
-                                this.classList.remove('far');
-                                this.classList.add('fas');
-                                localStorage.setItem(`favorite-event-${event.id}`, 'true');
-                            }
-                            
-                            // Force a redraw of the element to ensure the visual change takes effect
-                            this.style.display = 'none';
-                            this.offsetHeight; // Trigger a reflow
-                            this.style.display = ''; 
-                        });
-                    }
-                });
+
                 markers[event.id] = marker;
 
                 // Handle popup close

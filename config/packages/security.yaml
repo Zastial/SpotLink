@@ -21,7 +21,7 @@ security:
             security: false
 
         public:
-            pattern: ^/(login|home|register|access_denied|logout|redirect_home_page)
+            pattern: ^/(login|home|register|access_denied|logout|redirect_home_page|event)
             stateless: true
             security: false
 
