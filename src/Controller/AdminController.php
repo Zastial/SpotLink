@@ -108,6 +108,7 @@ final class AdminController extends AbstractController
             $this->addFlash('error', "Le compte est introuvable");
         }
         $userRepository->delete($user);
+        $this->addFlash('success', "Le compte a bien été supprimé !");
 
         return $this->redirectToRoute('app_admin_users');
     }
