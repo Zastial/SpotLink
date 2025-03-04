@@ -21,7 +21,7 @@ security:
             security: false
 
         public:
-            pattern: ^/(login|home|register|access_denied|logout)
+            pattern: ^/(login|home|register|access_denied|logout|user_informations)  #user information gérer dans le controlleur a cause du header
             stateless: true
             security: false
 
@@ -49,7 +49,7 @@ security:
         # Les pages de login home et inscription sont accessibles anonymement
         - { path: ^/(login|register|home|logout|access_denied), roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/*, roles: ROLE_ADMIN }
-        - { path: ^/user_informations, roles: ['ROLE_USER','ROLE_ADMIN'] }
+        #- { path: ^/user_informations, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/change_password, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/delete_account, roles: ['ROLE_USER','ROLE_ADMIN'] }
         - { path: ^/event/*, roles: ['ROLE_USER','ROLE_ADMIN'] }

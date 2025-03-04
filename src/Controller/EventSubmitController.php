@@ -34,7 +34,7 @@ final class EventSubmitController extends AbstractController
     }
 
     #[Route('/event/submit/{id?}', name: 'event_submit')]
-    public function new_event(Request $request,GetUserInformationService $getUserInformationService, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
+    public function new_event(Request $request, GetUserInformationService $getUserInformationService, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
     {
         $event = new Event();
         $eventStatus = new EventStatus();
@@ -46,11 +46,17 @@ final class EventSubmitController extends AbstractController
         $form = $this->createForm(EventFormType::class, $event);
         $form->handleRequest($request);
 
+
+        # En attente de résoudre les problèmes de header UI
+        $userDto = $getUserInformationService->getUserInformation($request);
+        if ($userDto === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         if ($form->isSubmitted()) {
-            
+
             $this->entityManager->beginTransaction();
             try {
-                $userDto = $getUserInformationService->getUserInformation($request);
 
                 if (!$id) {
                     $user = $userRepository->find($userDto->id);
@@ -96,10 +102,11 @@ final class EventSubmitController extends AbstractController
             'event_id' => $id,
         ]);
     }
-    
+
     #[Route('/getaddress', name: 'get_address', methods: ['GET'])]
-    public function get_address(Request $request){
-        
+    public function get_address(Request $request)
+    {
+
         $query = $request->query->get('q');
 
         if (!$query) {
@@ -129,5 +136,4 @@ final class EventSubmitController extends AbstractController
 
         return new JsonResponse(['results' => $results]);
     }
-
 }

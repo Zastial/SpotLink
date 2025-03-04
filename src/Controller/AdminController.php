@@ -16,12 +16,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Services\GetUserInformationService;
+
 
 final class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'app_admin')]
-    public function index(): Response
+    public function index(Request $request, GetUserInformationService $getUserInformationService): Response
     {
+        $userDto = $getUserInformationService->getUserInformation($request);
+        if ($userDto === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         return $this->render('admin/index.html.twig', [
             'controller_name' => 'AdminController',
         ]);
@@ -42,7 +49,7 @@ final class AdminController extends AbstractController
             'events' => $events,
             'status' => $status
             /* 'search' => $search */
-            
+
         ]);
     }
 
@@ -101,7 +108,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/admin/users/delete/{id}', name: 'app_admin_user_delete')]
-    public function userDelete(int $id,UserRepository $userRepository): Response
+    public function userDelete(int $id, UserRepository $userRepository): Response
     {
         $user = $userRepository->find($id);
         if (!$user) {

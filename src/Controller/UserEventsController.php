@@ -18,21 +18,27 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class UserEventsController extends AbstractController
 {
-    
+
     #[Route('/my-events', name: 'app_my_events')]
-    public function events(EventRepository $eventRepository, EventService $eventService,
-    CategoryRepository $categoryRepository,
-    EventCategoryService $eventCategoryService,
-    GetUserInformationService $getUserInformationService,
-    Request $request): Response
-    {
+    public function events(
+        EventRepository $eventRepository,
+        EventService $eventService,
+        CategoryRepository $categoryRepository,
+        EventCategoryService $eventCategoryService,
+        GetUserInformationService $getUserInformationService,
+        Request $request
+    ): Response {
         $userDto = $getUserInformationService->getUserInformation($request);
+        if ($userDto === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         // Filtrer les événements
         $events_validate = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::VALIDATED);
         $events_awaiting = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::AWAITING_VALIDATION);
         $events_partial_refuse = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::PARTIAL_REFUSED);
         $events_total_refuse = $eventRepository->getAllEventsFromUserWithStatus($userDto->id, StatusEnum::TOTAL_REFUSED);
-        
+
         $events = $eventService->getAllWithStatusValidated();
         $categories = $categoryRepository->getCategories();
 
@@ -52,32 +58,32 @@ final class UserEventsController extends AbstractController
 
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
         $icons = $this->getIcons($eventCategoryService, $eventCategoryMap);
-        
+
 
         return $this->render('user_events/user_events.html.twig', [
             'controller_name' => 'AdminController',
             'events' => [
-            [
-                "nom" => "Evènements publiés",
-                "events" => $events_validate,
-                "background" => "bg-validate"
+                [
+                    "nom" => "Evènements publiés",
+                    "events" => $events_validate,
+                    "background" => "bg-validate"
+                ],
+                [
+                    "nom" => "Evènements en attente",
+                    "events" => $events_awaiting,
+                    "background" => "bg-awaiting"
+                ],
+                [
+                    "nom" => "Evènements à reconsidérer",
+                    "events" => $events_partial_refuse,
+                    "background" => "bg-partialrefuse"
+                ],
+                [
+                    "nom" => "Evènements refusés",
+                    "events" => $events_total_refuse,
+                    "background" => "bg-totalrefuse"
+                ]
             ],
-            [
-                "nom" => "Evènements en attente",
-                "events" => $events_awaiting,
-                "background" => "bg-awaiting"
-            ],
-            [
-                "nom" => "Evènements à reconsidérer",
-                "events" => $events_partial_refuse,
-                "background" => "bg-partialrefuse"
-            ],
-            [
-                "nom" => "Evènements refusés",
-                "events" => $events_total_refuse,
-                "background" => "bg-totalrefuse"
-            ]
-        ],
             'icons' => $icons,
             'markerColors' => $markerColors,
 

@@ -6,7 +6,7 @@
                 <span class="text-2xl font-extrabold text-white">SpotLink</span>
             </a>
         </div>
-        <nav class="hidden md:flex gap-6 items-center pr-4">
+        <nav class="contentToShowWhenLogged hidden md:flex gap-6 items-center pr-4" >
             <a href="/" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Voir la carte</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
             <a href="/my-events" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Mes évènements</a> <!-- Turbo uses the cache, we need to desactivate it to refresh the map from Leaflet -->
             <a href="/event/submit" data-turbo="false" class="text-lg text-gray-800 hover:underline active:underline">Soumettre un évènement</a>
@@ -18,26 +18,26 @@
             </button>
         </div>
     </div>
-    <div class="hidden md:flex gap-0.2 items-center">
-        <a href="/user_informations" data-turbo="false">
-            <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
-                <i class="fa-solid fa-user text-primary text-xl"></i>
-            </div>
-        </a>
-        <a href="/admin" data-turbo="false">
-            <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
-                <i class="fa-solid fa-user-tie text-green text-xl"></i>
-            </div>
-        </a>
-        <a href="/logout" data-turbo="false">
-            <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
-                <i class="fa-solid fa-right-from-bracket text-primary text-xl text-red"></i>
-            </div>
-        </a>
-    </div>
+        <div class=" hidden md:flex gap-0.2 items-center" >
+            <a href="/user_informations" data-turbo="false">
+                <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
+                    <i class="fa-solid fa-user text-primary text-xl"></i>
+                </div>
+            </a>
+            <a href="/admin" data-turbo="false" class="contentToShowWhenLogged">
+                <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
+                    <i class="fa-solid fa-user-tie text-green text-xl"></i>
+                </div>
+            </a>
+            <a href="/logout" data-turbo="false" class="contentToShowWhenLogged">
+                <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
+                    <i class="fa-solid fa-right-from-bracket text-primary text-xl text-red"></i>
+                </div>
+            </a>
+        </div>
 </header>
 
-<div id="sideMenu" class="rounded-3xl fixed top-0 right-0 bg-white w-64 transform translate-x-full transition-transform duration-300 ease-in-out shadow-lg z-50">
+<div id="sideMenu" class="contentToShowWhenLogged rounded-3xl fixed top-0 right-0 bg-white w-64 transform translate-x-full transition-transform duration-300 ease-in-out shadow-lg z-50 contentToShowWhenLogged" >
     <div class="flex justify-between items-center p-4 border-b">
         <span class="text-xl font-extrabold text-primary">SpotLink</span>
         <button id="closeMenuBtn" class="text-2xl text-primary">
@@ -71,4 +71,40 @@
             }
         });
     });
+
+    function getBearerToken() {
+        let cookie = document.cookie;
+        let match = cookie.match(/Bearer=([^;]+)/);
+        
+        if (match) {
+            return match[1];  // Retourne le token sans "Bearer="
+        }
+        
+        return null;  // Retourne null si le cookie n'existe pas
+    }
+
+
+    window.onload = function() {
+        // let bearerToken = getBearerToken();
+        // let contentToShowWhenLogged = document.querySelectorAll(".contentToShowWhenLogged"); // Utiliser un sélecteur de classe
+
+        // console.log(contentToShowWhenLogged);
+
+        // if (bearerToken) {
+        //     console.log("Token Bearer : ", bearerToken);
+
+        //     // Afficher les éléments en retirant l'attribut "hidden"
+        //     contentToShowWhenLogged.forEach(element => {
+        //         element.style = ""; // Retirer la classe "hidden" pour afficher l'élément
+        //     });
+        // } else {
+        //     console.log("Aucun token Bearer trouvé.");
+
+        //     // Masquer les éléments en ajoutant l'attribut "hidden"
+        //     contentToShowWhenLogged.forEach(element => {
+        //        element.style.display = "none"; //Ajouter la classe "hidden" pour masquer l'élément
+        //     });
+        // }
+
+    }
 </script>

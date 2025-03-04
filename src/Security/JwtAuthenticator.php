@@ -46,15 +46,15 @@ class JwtAuthenticator extends AbstractAuthenticator
     public function supports(Request $request): bool
     {
 
-        // Pas besoin d'authentification pour ces routes
-        if (preg_match('#^/(login|register|home|logout|access_denied)#', $request->getPathInfo())) {
+        // Pas besoin d'authentification pour ces routes (user information géré par le controller a cause du header, A fix)
+        if (preg_match('#^/(login|register|home|logout|access_denied|user_informations)#', $request->getPathInfo())) {
             return false;
         }
 
         $token = $this->jwtService->getJwtTokenFromRequest($request);
 
         return $token !== null;
-        
+
         # Version header Authorization
         // $authHeader = $request->headers->get('Authorization');
         // if (!$authHeader) {
@@ -74,6 +74,10 @@ class JwtAuthenticator extends AbstractAuthenticator
     {
         $token = $request->cookies->get('Bearer');  // Récupérer le cookie Bearer
 
+
+        if (!$token) {
+            throw new AuthenticationException('Token non trouvé.');
+        }
         # Version header Authorization
         //$authHeader = $request->headers->get('Authorization');
         //$token = substr($authHeader, 7);
@@ -101,7 +105,8 @@ class JwtAuthenticator extends AbstractAuthenticator
      * Cas d'un mauvais mot de passe par exemple.
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?RedirectResponse
-    {   
+    {
+        echo "<script>alert('Erreur d'authentification')</script>";
 
         if ($exception instanceof AccessDeniedException) {
             // Rediriger vers la page d'erreur d'accès
@@ -109,8 +114,6 @@ class JwtAuthenticator extends AbstractAuthenticator
         }
 
         return new RedirectResponse($this->router->generate('app_login'));
-
-
     }
 
     /**
