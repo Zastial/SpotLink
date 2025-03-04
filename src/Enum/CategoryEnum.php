@@ -18,7 +18,7 @@ enum CategoryEnum: string {
         return match($this) {
             self::SPORT => 'fas fa-running',
             self::CONCERT => 'fas fa-microphone-alt',
-            self::CONFERENCE => 'fas fa-podium',
+            self::CONFERENCE => 'fas fa-chalkboard-teacher',
             self::EXPOSITION => 'fas fa-paint-brush',
             self::FESTIVAL => 'fas fa-music',
             self::THEATRE => 'fas fa-theater-masks',
