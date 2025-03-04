@@ -24,16 +24,20 @@
                 <i class="fa-solid fa-user text-primary text-xl"></i>
             </div>
         </a>
+        {% if is_granted('ROLE_ADMIN') %}
         <a href="/admin" data-turbo="false">
             <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
                 <i class="fa-solid fa-user-tie text-green text-xl"></i>
             </div>
         </a>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <a href="/logout" data-turbo="false">
             <div class="hidden md:flex bg-white px-5 py-4 rounded-full items-center border-t-2 border-b-[5px] border-l-[3px] border-r-[3px] border-gray-200">
                 <i class="fa-solid fa-right-from-bracket text-primary text-xl text-red"></i>
             </div>
         </a>
+        {% endif %}
     </div>
 </header>
 
@@ -49,8 +53,12 @@
         <a href="/user_informations" data-turbo="false" class="text-lg text-gray-800 hover:underline">Mon compte</a>
         <a href="/my-events" data-turbo="false" class="text-lg text-gray-800 hover:underline">Mes évènements</a>
         <a href="/event/submit" data-turbo="false" class="text-lg text-gray-800 hover:underline">Soumettre un évènement</a>
+        {% if is_granted('ROLE_ADMIN') %}
         <a href="/admin" data-turbo="false" class="text-lg text-green hover:underline">Administration</a>
-        <a href="/home" data-turbo="false" class="text-lg text-red hover:underline">Se déconnecter</a>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <a href="/logout" data-turbo="false" class="text-lg text-red hover:underline">Se déconnecter</a>
+        {% endif %}
     </nav>
 </div>
 
