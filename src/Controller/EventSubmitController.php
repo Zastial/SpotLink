@@ -34,7 +34,7 @@ final class EventSubmitController extends AbstractController
     }
 
     #[Route('/event/submit/{id?}', name: 'event_submit')]
-    public function new_event(Request $request,GetUserInformationService $getUserInformationService, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
+    public function new_event(Request $request, GetUserInformationService $getUserInformationService, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
     {
         $event = new Event();
         $eventStatus = new EventStatus();
@@ -47,7 +47,7 @@ final class EventSubmitController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            
+
             $this->entityManager->beginTransaction();
             try {
                 $userDto = $getUserInformationService->getUserInformation($request);
@@ -79,12 +79,12 @@ final class EventSubmitController extends AbstractController
                 $this->entityManager->commit();
 
                 $this->addFlash('success', 'Événement ' . $message . ' avec succès !');
-                return $this->redirectToRoute('app_home_page');
+                return $this->redirectToRoute('home');
             } catch (\Exception $e) {
                 $this->entityManager->rollback();
                 if ($e->getCode() === 401) {
                     $this->addFlash('error', $e->getMessage());
-                    return $this->redirectToRoute('app_home_page');
+                    return $this->redirectToRoute('home');
                 }
                 $this->addFlash('error', "Un problème est survenu lors de l'opération");
                 return $this->redirectToRoute('event_submit');
@@ -96,10 +96,11 @@ final class EventSubmitController extends AbstractController
             'event_id' => $id,
         ]);
     }
-    
+
     #[Route('/getaddress', name: 'get_address', methods: ['GET'])]
-    public function get_address(Request $request){
-        
+    public function get_address(Request $request)
+    {
+
         $query = $request->query->get('q');
 
         if (!$query) {
@@ -129,5 +130,4 @@ final class EventSubmitController extends AbstractController
 
         return new JsonResponse(['results' => $results]);
     }
-
 }

@@ -34,12 +34,11 @@ final class UserInformationsController extends AbstractController
     #[Route('/user_informations', name: 'user_informations')]
     public function user_informations(Request $request): Response
     {
-        
+
         $userDto = $this->getUserInformationService->getUserInformation($request);
 
         if ($userDto === null) {
-            $this->addFlash('error', "Le compte utilisateur est introuvable.");
-            return $this->redirectToRoute("user_informations");
+            return $this->redirectToRoute('app_login');
         }
 
         $user = $this->entityManager->getRepository(User::class)->find($userDto->id);
@@ -48,18 +47,17 @@ final class UserInformationsController extends AbstractController
 
         $userform->handleRequest($request);
         if ($userform->isSubmitted() && $userform->isValid()) {
-            try{
-                if (!$user){
+            try {
+                if (!$user) {
                     throw new \Exception('Un problème est survenu lors de l\'opération.');
                 }
-           
+
                 $userToUpdate = $this->userMapper->mapDtoToEntity($userDto, $user);
-                
+
                 $this->entityManager->persist($userToUpdate);
                 $this->entityManager->flush();
                 $this->addFlash('success', "Vos informations ont été mises à jour !");
-
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 $this->addFlash('error', "Un problème est survenu lors de l'opération.");
                 return $this->redirectToRoute("user_informations");
             }
@@ -75,13 +73,13 @@ final class UserInformationsController extends AbstractController
     {
         $userDTO = $getUserInformationService->getUserInformation($request);
         $user = $userRepository->find($userDTO->id);
-        try{
+        try {
             $userRepository->delete($user);
             $this->addFlash('success', "Votre compte a été supprimé avec succès !");
 
             #TODO : Enlever les routes pour les users connectés
-            return $this->redirectToRoute('app_home_page');
-        }catch(\Exception $e){
+            return $this->redirectToRoute('home');
+        } catch (\Exception $e) {
             $this->addFlash('error', "Un problème est survenu lors de l'opération.");
             return $this->redirectToRoute("user_informations");
         }
@@ -97,18 +95,18 @@ final class UserInformationsController extends AbstractController
         $user = $userRepository->find($userDTO->id);
         $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
 
-        try{
+        try {
             if (!$this->isCsrfTokenValid('change_password', $request->request->get('_token'))) {
                 $this->addFlash('error', "Le CSRF token est invalide");
             }
-            if (!$user){
+            if (!$user) {
                 throw new \Exception('Un problème est survenu lors de l\'opération.');
             }
             $user->setPassword($hashedPassword);
             $userRepository->save($user);
             $this->addFlash('success', "Votre mot de pass a été modifié avec succès !");
             return $this->redirectToRoute('user_informations');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $this->addFlash('error', "Un problème est survenu lors de l'opération.");
             return $this->redirectToRoute("user_informations");
         }

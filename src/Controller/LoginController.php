@@ -24,10 +24,11 @@ final class LoginController extends AbstractController
 
 
     // Injection du service d'inscription
-    public function __construct(UserLoginServiceInterface $loginService,
-                                ValidatorInterface $validator,
-                                JwtService $jwtService)
-    {
+    public function __construct(
+        UserLoginServiceInterface $loginService,
+        ValidatorInterface $validator,
+        JwtService $jwtService
+    ) {
         $this->loginService = $loginService;
         $this->validator = $validator;
         $this->jwtService = $jwtService;
@@ -61,36 +62,36 @@ final class LoginController extends AbstractController
                 // Récupérer la date d'expiration du token
                 $expiresAt = $token->claims()->get('exp');
 
-                 // Créer qui sera envoyé automatiquement avec les requêtes de l'utilisateur
-                $cookie = Cookie::create('Bearer',
+                // Créer qui sera envoyé automatiquement avec les requêtes de l'utilisateur
+                $cookie = Cookie::create(
+                    'Bearer',
                     $token->toString(),
                     $expiresAt,
                     '/', // Valide sur toute l'app
-                    null, 
+                    null,
                     false, // Envoyer uniquement le cookie en HTTPS
                     false, // Peut être défini à 'None' pour autoriser le cookie sur des sites tiers
                     true  // Singature
                 );
-                
+
 
                 // Rediriger vers la page d'accueil
-                $response = $this->redirectToRoute('app_home_page');
+                $response = $this->redirectToRoute('home');
                 $response->headers->setCookie($cookie);
                 return $response;
             }
 
 
-               
+
 
             // Si le formulaire n'a pas été soumis ou est invalide, affichage de la page avec le formulaire
             return $this->render('login/login.html.twig', [
                 'form' => $form->createView()
             ]);
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // TODO pages d'erreur 
             // $this->addFlash('error', 'Une erreur est survenue lors de la connexion. Veuillez contacter votre administrateur.');
-             return $this->redirectToRoute('error_page');  // Page d'erreur personnalisée
+            return $this->redirectToRoute('error_page');  // Page d'erreur personnalisée
         }
     }
 
