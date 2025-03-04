@@ -15,12 +15,13 @@ use App\Repository\UserRepository;
 use App\Security\JwtService;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
 
 /**
  * Classe JwtAuthenticator permettant de gérer l'authentification JWT.
  */
-class JwtAuthenticator extends AbstractAuthenticator
+class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     private $jwtService;
     private $userRepository;
@@ -47,14 +48,14 @@ class JwtAuthenticator extends AbstractAuthenticator
     {
 
         // Pas besoin d'authentification pour ces routes
-        if (preg_match('#^/(login|register|home|logout|access_denied)#', $request->getPathInfo())) {
+        if (preg_match('#^/(login|register|home|logout|access_denied|redirect_home_page)#', $request->getPathInfo())) {
             return false;
         }
 
         $token = $this->jwtService->getJwtTokenFromRequest($request);
 
         return $token !== null;
-        
+
         # Version header Authorization
         // $authHeader = $request->headers->get('Authorization');
         // if (!$authHeader) {
@@ -72,7 +73,11 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function authenticate(Request $request): Passport
     {
-        $token = $request->cookies->get('Bearer');  // Récupérer le cookie Bearer
+        $token = $this->jwtService->getJwtTokenFromRequest($request);
+
+        if (!$token) {
+            throw new AuthenticationException('Token JWT manquant.');
+        }
 
         # Version header Authorization
         //$authHeader = $request->headers->get('Authorization');
@@ -101,7 +106,7 @@ class JwtAuthenticator extends AbstractAuthenticator
      * Cas d'un mauvais mot de passe par exemple.
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?RedirectResponse
-    {   
+    {
 
         if ($exception instanceof AccessDeniedException) {
             // Rediriger vers la page d'erreur d'accès
@@ -109,8 +114,6 @@ class JwtAuthenticator extends AbstractAuthenticator
         }
 
         return new RedirectResponse($this->router->generate('app_login'));
-
-
     }
 
     /**
@@ -125,8 +128,9 @@ class JwtAuthenticator extends AbstractAuthenticator
      * Gère le cas où l'authentification est requise.
      * Appeler quand l'utilisateur n'est pas authentifié.
      */
-    public function start(): RedirectResponse
+    public function start(Request $request, ?AuthenticationException $authException = null): RedirectResponse
     {
+        echo "<script>console.log('Vous devez être connecté pour accéder à cette page.');</script>";
         // Quand le token est absent ou invalide
         return new RedirectResponse($this->router->generate('app_login'));
     }

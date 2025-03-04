@@ -78,7 +78,7 @@ final class UserInformationsController extends AbstractController
             $this->addFlash('success', "Votre compte a été supprimé avec succès !");
 
             #TODO : Enlever les routes pour les users connectés
-            return $this->redirectToRoute('app_home_page');
+            return $this->redirectToRoute('home');
         } catch (\Exception $e) {
             $this->addFlash('error', "Un problème est survenu lors de l'opération.");
             return $this->redirectToRoute("user_informations");

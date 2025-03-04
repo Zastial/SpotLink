@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Repository\EventRepository;
 use App\Repository\CategoryRepository;
 use App\Services\EventCategoryService;
@@ -15,18 +16,17 @@ final class HomePageController extends AbstractController
     #[Route('/', name: 'redirect_home_page')]
     public function redirectToHomePage(): Response
     {
-        return $this->redirectToRoute('app_home_page');
+        return $this->redirectToRoute('home');
     }
 
     // The route for the home page
-    #[Route('/home', name: 'app_home_page')]
+    #[Route('/home', name: 'home')]
     public function index(
         EventService $eventService,
         CategoryRepository $categoryRepository,
         EventCategoryService $eventCategoryService,
         SerializerInterface $serializer
-    ): Response
-    {
+    ): Response {
         $events = $eventService->getAllWithStatusValidated();
         $categories = $categoryRepository->getCategories();
 
@@ -37,11 +37,11 @@ final class HomePageController extends AbstractController
         $markerColors = $this->getMarkerColors($eventCategoryService, $eventCategoryMap);
         $icons = $this->getIcons($eventCategoryService, $eventCategoryMap);
 
-        usort($events, function($a, $b) {
+        usort($events, function ($a, $b) {
             return $a->getDateStart() <=> $b->getDateStart();
         }); // Sort events by date to show the closest first
 
-        $eventsForJS = array_map(function($event) {
+        $eventsForJS = array_map(function ($event) {
             return [
                 'id' => $event->getId(),
                 'name' => $event->getName(),
@@ -86,8 +86,7 @@ final class HomePageController extends AbstractController
         CategoryRepository $categoryRepository,
         EventCategoryService $eventCategoryService,
         int $id
-    ): Response
-    {
+    ): Response {
         $event = $eventRepository->find($id);
         $eventForJS = [
             'id' => $event->getId(),

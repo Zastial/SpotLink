@@ -37,9 +37,14 @@ class JwtService
     /**
      * Récupère le Jwt via le cookie
      */
-    public function getJwtTokenFromRequest(Request $request) : ?string {
-        $token = $request->cookies->get('Bearer');
-        return empty($token) ? null : $token;
+    public function getJwtTokenFromRequest(Request $request): ?string
+    {
+        try {
+            $token = $request->cookies->get('Bearer');
+            return empty($token) ? null : $token;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
 
