@@ -48,7 +48,7 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     {
 
         // Pas besoin d'authentification pour ces routes
-        if (preg_match('#^/(login|register|home|logout|access_denied|redirect_home_page)#', $request->getPathInfo())) {
+        if (preg_match('#^/(login|register|home|logout|access_denied|redirect_page)#', $request->getPathInfo())) {
             return false;
         }
 

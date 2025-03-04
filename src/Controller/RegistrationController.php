@@ -21,13 +21,14 @@ final class RegistrationController extends AbstractController
 {
     private UserRegistrationServiceInterface $registrationService;
     private ValidatorInterface $validator;
-    
+
 
 
     // Injection du service d'inscription
-    public function __construct(UserRegistrationServiceInterface $registrationService,
-                                ValidatorInterface $validator)
-    {
+    public function __construct(
+        UserRegistrationServiceInterface $registrationService,
+        ValidatorInterface $validator
+    ) {
         $this->registrationService = $registrationService;
         $this->validator = $validator;
     }
@@ -40,40 +41,57 @@ final class RegistrationController extends AbstractController
             $user = new User();
             $form = $this->createForm(UserRegisterType::class, $user);
             $form->handleRequest($request);
-    
+
             if ($form->isSubmitted() && $form->isValid()) {
-                
+
                 $password = $form->get('password')->getData();
                 $confirmPassword = $form->get('confirmPassword')->getData();
 
-                if ($this->passwordAreIncorrect($password, $confirmPassword, $form)) {
-                    $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
+
+                $violations = $this->validator->validate($password, [
+                    new Assert\Length(['min' => 6, 'minMessage' => 'Le mot de passe doit contenir au moins 6 caractères.']),
+                    new Assert\NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
+                ]);
+
+                // Si des violations existent, les ajouter à l'objet du formulaire
+                foreach ($violations as $violation) {
+                    $form->get('password')->addError(new FormError($violation->getMessage()));
+                    $this->addFlash('error', $violation->getMessage());
+                }
+
+                if (count($violations) > 0) {
                     return $this->redirectToRoute('register');
                 }
-    
+
+                // Si les mots de passe ne correspondent pas
+                if ($password !== $confirmPassword) {
+                    $form->get('confirmPassword')->addError(new FormError('Les mots de passe ne correspondent pas.'));
+                    $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                    return $this->redirectToRoute('register');
+                }
+
                 // Sauvegarde de l'utilisateur en base de données
                 $response = $this->registrationService->register($user, $password);
-    
+
                 if (!$response->success) {
                     $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription : ' . $response->message);
                     return $this->redirectToRoute('register');
                 }
-    
+
                 $this->addFlash('success', 'Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.');
                 return $this->redirectToRoute('app_login');
             }
-    
+
             // Si le formulaire n'est pas valide, les erreurs seront automatiquement attachées au formulaire
             return $this->render('registration/register.html.twig', [
                 'form' => $form->createView(),
             ]);
-            
         } catch (\Exception $e) {
             $this->addFlash('error', 'Une erreur est survenue. Veuillez réessayer.');
             return $this->redirectToRoute('register');
         }
     }
-    
+
 
     /**
      * Valide les mots de passe du formulaire d'inscription.
@@ -82,7 +100,8 @@ final class RegistrationController extends AbstractController
      * @param FormInterface $form Le formulaire d'inscription.
      * @return bool Vrai si les mots de passe sont valides, faux sinon.
      */
-    private function passwordAreIncorrect(string $password, string $confirmPassword, Form $form): bool {
+    private function passwordAreIncorrect(string $password, string $confirmPassword, Form $form): bool
+    {
 
         // Valider le mot de passe
         $violations = $this->validator->validate($password, [
@@ -100,6 +119,6 @@ final class RegistrationController extends AbstractController
             $form->get('confirmPassword')->addError(new FormError('Les mots de passe ne correspondent pas.'));
         }
 
-        return count($violations) > 0 && $password !== $confirmPassword;
+        return count($violations) > 0 || $password !== $confirmPassword;
     }
 }
