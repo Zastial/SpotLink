@@ -4,8 +4,8 @@
 
 {% block body %}
 
-   <div class="flex justify-center items-center min-h-screen">
-    <div class="w-5/12 bg-white p-6 rounded-lg shadow-lg">
+   <div class="flex justify-center items-center">
+    <div class="register w-5/12 bg-white p-6 rounded-lg shadow-lg">
         <div class="flex items-center mb-4">
             <i class="fa-solid fa-user-plus text-2xl mr-2"></i>
             <h2 class="text-2xl font-bold text-gray-800">Créer un compte</h2>
@@ -59,5 +59,13 @@
         {{ form_end(form) }}
     </div>
 </div>
+
+ <style>
+    @media (max-width: 1024px) {
+        .register {
+            width: 80%;
+        }
+    }
+</style>
 
 {% endblock %}
