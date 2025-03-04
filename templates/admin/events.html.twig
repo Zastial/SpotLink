@@ -47,7 +47,7 @@
 					            <td class="py-3 px-6 text-left">{{ event.dateStart|date('Y-m-d H:i:s') }}</td>
 					            <td class="py-3 px-6 text-left">{{ event.dateEnd|date('Y-m-d H:i:s') }}</td>
 					             #}
-					<td>
+					<td class="flex space-x-2 p-2">
 						{% if event.eventStatus.status.id == 2 %}
 						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green text-white hover:bg-green-dark font-bold py-2 px-4 rounded-full"><i class="fas fa-check-circle text-white"></i></a>
 						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red text-white hover:bg-red-dark font-bold py-2 px-4 rounded-full"><i class="fas fa-times-circle text-white"></i></a>

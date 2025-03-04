@@ -87,7 +87,7 @@ final class EventSubmitController extends AbstractController
                     return $this->redirectToRoute('home');
                 }
                 $this->addFlash('error', "Un problème est survenu lors de l'opération");
-                return $this->redirectToRoute('event_submit');
+                return $this->redirectToRoute('create_event');
             }
         }
 

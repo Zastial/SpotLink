@@ -20,7 +20,7 @@
 									<li class="w-[300px] p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all cursor-pointer" tabindex="0" data-event-id="{{ event.id }}" data-category-id="{{ event.category.id }}">
 										<div class="font-bold text-lg text-primary">
 											{% if event.eventStatus.status.id == 5 %}
-												<a href="{{ path('event_submit', { 'id': event.id }) }}" data-turbo='false' class="hover:underline">
+												<a href="{{ path('create_event', { 'id': event.id }) }}" data-turbo='false' class="hover:underline">
 													{{ event.name|length > 35 ? event.name|slice(0, 35) ~ '...' : event.name }}
 												</a>
 											{% else %}
