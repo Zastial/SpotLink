@@ -130,7 +130,6 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
      */
     public function start(Request $request, ?AuthenticationException $authException = null): RedirectResponse
     {
-        echo "<script>console.log('Vous devez être connecté pour accéder à cette page.');</script>";
         // Quand le token est absent ou invalide
         return new RedirectResponse($this->router->generate('app_login'));
     }

@@ -71,8 +71,8 @@ final class UserInformationsController extends AbstractController
     #[Route('/delete_account', name: 'delete_account')]
     public function delete_account(Request $request, UserRepository $userRepository, GetUserInformationService $getUserInformationService): Response
     {
-        #TODO : Remplacer par user connected
-        $user = $userRepository->findOneBy([], ['id' => 'ASC']);
+        $userDTO = $getUserInformationService->getUserInformation($request);
+        $user = $userRepository->find($userDTO->id);
         try {
             $userRepository->delete($user);
             $this->addFlash('success', "Votre compte a été supprimé avec succès !");
