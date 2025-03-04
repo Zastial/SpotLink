@@ -52,7 +52,7 @@
 						<a href="{{ path('app_admin_event_to_validate', {'id': event.id}) }}" class="bg-green text-white hover:bg-green-dark font-bold py-2 px-4 rounded-full"><i class="fas fa-check-circle text-white"></i></a>
 						<a href="{{ path('app_admin_event_to_refuse', {'id': event.id}) }}" class="bg-red text-white hover:bg-red-dark font-bold py-2 px-4 rounded-full"><i class="fas fa-times-circle text-white"></i></a>
 						{% endif %}
-						<a href="{{ path('event_detail', {'id': event.id}) }}" class="bg-primary text-white hover:bg-primary-dark font-bold py-2 px-4 rounded-full"><i class="fa-solid fa-eye text-white"></i></i></a>
+						<a href="{{ path('event_detail', {'id': event.id}) }}" data-turbo="false" class="bg-primary text-white hover:bg-primary-dark font-bold py-2 px-4 rounded-full"><i class="fa-solid fa-eye text-white"></i></i></a>
 					</td>
 				</tr>
 			{% endfor %}
