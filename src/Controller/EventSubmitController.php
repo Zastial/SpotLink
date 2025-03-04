@@ -33,7 +33,7 @@ final class EventSubmitController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/event/submit/{id?}', name: 'event_submit')]
+    #[Route('/create_event/{id?}', name: 'create_event')]
     public function new_event(Request $request, GetUserInformationService $getUserInformationService, UserRepository $userRepository, StatusRepository $statusRepository, EventStatusRepository $eventStatusRepository, EventRepository $eventRepository, ?int $id = null): Response
     {
         $event = new Event();
